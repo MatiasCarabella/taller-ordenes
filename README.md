@@ -1,6 +1,6 @@
 # Gestión de órdenes para talleres
 
-Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa el entorno Docker, el esquema, la utilidad local de cuentas y el acceso real por perfiles con sesión del servidor. Incluye registro/consulta de vehículos y apertura/consulta de órdenes. El siguiente incremento incorpora diagnóstico y presupuestos versionados.
+Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa el entorno Docker, el esquema, la utilidad local de cuentas y el acceso real por perfiles con sesión del servidor. Incluye registro/consulta de vehículos y apertura/consulta de órdenes. Incluye diagnóstico, presupuestos completos versionados y decisión del cliente. El siguiente incremento incorpora reparación, cierre, entrega y margen.
 
 ## Requisitos
 
@@ -36,7 +36,7 @@ Los Dockerfiles fijan las imágenes oficiales por digest. El frontend tiene lock
 
 Flyway usa una cuenta de migraciones distinta de la aplicación. V1 crea Usuario, Vehículo, Orden, Presupuesto y Renglón; V2 agrega la FK compuesta de autorización. Flyway valida migraciones existentes y no las repite al reiniciar. No editar una migración ya aplicada: agregar otra.
 
-Las FK compuestas impiden que una orden use el vehículo de otro titular o una autorización de otra orden. Existen restricciones de dominio, unicidad, tokens completos y datos de cierre. La validación de perfiles referenciados, la inmutabilidad y las decisiones concurrentes se completarán con servicios transaccionales en H3–H5, según [las decisiones iniciales](docs/decisiones-iniciales.md).
+Las FK compuestas impiden que una orden use el vehículo de otro titular o una autorización de otra orden. Existen restricciones de dominio, unicidad, tokens completos y datos de cierre. Los servicios de H3/H4 validan perfiles referenciados, titularidad, presupuestos inmutables y decisiones concurrentes; H5 agrega las reglas de cierre, según [las decisiones iniciales](docs/decisiones-iniciales.md).
 
 Las cuentas MySQL de aplicación, migraciones y respaldo tienen contraseñas diferentes. Los archivos viven en `.secrets/`, excluidos de Git y del contexto Docker. La cuenta de aplicación no tiene permisos de DDL ni DELETE. El script de inicialización de usuarios se ejecuta únicamente al crear un volumen nuevo: cambiar archivos de secretos no cambia automáticamente contraseñas de una base ya inicializada.
 
@@ -68,7 +68,15 @@ Personal registra/selecciona vehículos y abre órdenes. Administración consult
 
 Desde Personal: Vehículos → Registrar vehículo → elegir cliente activo y guardar → Abrir orden → responsable activo y motivo → Confirmar apertura. La orden queda Recibido. Un dominio repetido devuelve la ficha existente y conserva su titular. Los listados permiten búsquedas y paginación; las fichas enlazan vehículo y sus órdenes.
 
-Ver [los endpoints y reglas de operaciones](docs/api-operaciones.md). No hay edición de titular ni escritura libre de estado. El diagnóstico y los presupuestos corresponden a H4.
+Ver [los endpoints y reglas de operaciones](docs/api-operaciones.md). No hay edición de titular ni escritura libre de estado. El diagnóstico y los presupuestos están disponibles en el detalle de cada orden.
+
+## Diagnóstico y presupuestos
+
+Desde Personal: Órdenes → detalle → Guardar diagnóstico → Preparar presupuesto → cargar alcance completo, renglones y vencimiento → Revisar presupuesto → Confirmar publicación. Se puede corregir el diagnóstico hasta publicar la primera versión. Cada versión publicada queda fija. El borrador no se guarda al salir.
+
+Desde Cliente: Mis órdenes → detalle → aceptar, rechazar o solicitar revisión de la última versión pendiente; confirmar la decisión. Solo el titular responde, una vez y antes del vencimiento. La pantalla distingue la última propuesta del alcance autorizado. Un adicional rechazado, revisado o vencido conserva la aceptación anterior; aceptar la nueva versión sustituye esa autorización. Administración consulta el historial.
+
+Cada propuesta incluye todo el alcance; la nueva versión parte de la última publicada para facilitar su revisión. Los importes se calculan en servidor con decimales y HALF_UP por renglón. Los plazos se ingresan y muestran en hora de Buenos Aires. Si otra operación cambia la versión o autorización, se debe actualizar y revisar antes de publicar. Ver [API de presupuestos](docs/api-presupuestos.md).
 
 ## Verificación
 
@@ -76,9 +84,9 @@ Ver [los endpoints y reglas de operaciones](docs/api-operaciones.md). No hay edi
 ./scripts/verificar.ps1
 ```
 
-En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 37 pruebas, incluidas sesiones, CSRF, permisos, altas concurrentes y titularidad; ver [la evidencia de H3](docs/VERIFICACION_H3.md).
+En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 55 pruebas, incluidas sesiones, CSRF, permisos, titularidad, precisión monetaria, vencimientos y publicaciones/decisiones concurrentes; ver [la evidencia de H4](docs/VERIFICACION_H4.md).
 
-Las pruebas del esquema comprueban cinco entidades, migraciones repetibles sin cambios, dominio único, titular correcto, Administración única, tarifa por perfil, autorización de la misma orden, unicidad de versiones, respuestas completas, renglones válidos, tokens, cierres y límites decimales. Las reglas de estados, dinero y concurrencia se probarán al implementar sus servicios.
+Las pruebas del esquema comprueban cinco entidades, migraciones repetibles sin cambios, dominio único, titular correcto, Administración única, tarifa por perfil, autorización de la misma orden, unicidad de versiones, respuestas completas, renglones válidos, tokens, cierres y límites decimales. H4 prueba estados, dinero y concurrencia de presupuestos sobre servicios reales; H5 incorpora el cierre y sus cálculos.
 
 ## Operación local
 

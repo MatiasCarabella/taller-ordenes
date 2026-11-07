@@ -1,6 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import * as api from './api';
 import type { Sesion } from './api';
+import {useResource,ErrorBox} from './recursos';
+import {Presupuestos} from './presupuestos';
+import './presupuestos.css';
 
 interface Cuenta { id:number; nombre:string; correo:string }
 interface Vehiculo { id:number; clienteId:number; clienteNombre:string; clienteActivo:boolean; dominio:string; marca:string; modelo:string }
@@ -13,21 +16,6 @@ const estados:Record<string,string>={RECIBIDO:'Recibido',DIAGNOSTICADO:'Diagnost
   APROBADO:'Aprobado',EN_REPARACION:'En reparación',FINALIZADO:'Finalizado',ENTREGADO:'Entregado',RECHAZADO:'Rechazado',CANCELADO:'Cancelado'};
 const fecha=(value:string)=>new Intl.DateTimeFormat('es-AR',{dateStyle:'short',timeStyle:'short',timeZone:'America/Argentina/Buenos_Aires',hourCycle:'h23'}).format(new Date(value));
 const mensaje=(e:unknown)=>e instanceof api.ApiError?e.message:'No pudimos conectar. Volvé a intentarlo.';
-function useResource<T>(url:string|null,onExpired:()=>void) {
-  const[data,setData]=useState<T|null>(null),[loading,setLoading]=useState(!!url),[error,setError]=useState(''),[version,setVersion]=useState(0);
-  useEffect(()=>{
-    if(!url)return;
-    let alive=true;setLoading(true);setError('');
-    api.get<T>(url).then(value=>{if(alive)setData(value);}).catch(e=>{
-      if(!alive)return;if(e instanceof api.ApiError&&e.status===401)onExpired();else setError(mensaje(e));
-    }).finally(()=>{if(alive)setLoading(false);});
-    return()=>{alive=false;};
-  },[url,version,onExpired]);
-  return {data,loading,error,reload:()=>setVersion(v=>v+1)};
-}
-function ErrorBox({message,retry}:{message:string;retry?:()=>void}) {
-  return <div className="alert" role="alert"><p>{message}</p>{retry&&<button onClick={retry}>Volver a intentar</button>}</div>;
-}
 function Pager({page,total,size,move}:{page:number;total:number;size:number;move:(n:number)=>void}) {
   return <div className="pager"><span>Página {page+1} de {Math.max(1,Math.ceil(total/size))}</span><div>
     <button disabled={page===0} onClick={()=>move(page-1)}>Anterior</button>
@@ -194,5 +182,6 @@ function OrderDetail(props:Props) {
         <section className="panel"><h2>Recepción</h2><dl className="record-data"><dt>Ingreso</dt><dd>{fecha(resource.data.recibidoEn)}</dd>
           <dt>Responsable</dt><dd>{resource.data.responsableNombre}</dd><dt>Actualización</dt><dd>{fecha(resource.data.actualizadoEn)}</dd></dl></section></div>
       <section className="panel form-panel"><h2>Motivo de ingreso</h2><p className="multiline">{resource.data.motivoIngreso}</p></section>
+      <Presupuestos ordenId={resource.data.id} perfil={props.session.usuario.perfil} onChanged={resource.reload} onExpired={props.onExpired}/>
     </>}</>;
 }

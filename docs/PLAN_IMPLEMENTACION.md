@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H3 implementados y verificados; primer recorrido HU-01/HU-11/HU-02 completo. Siguiente hito: H4 (diagnóstico, presupuestos y decisión).
+Estado: H0–H4 implementados y verificados; acceso, vehículos, apertura, diagnóstico, presupuestos y decisión completos. Siguiente hito: H5 (reparación, cierre, entrega y margen).
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -47,7 +47,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H1 | Esquema íntegro y datos ficticios | H0 | Completado |
 | H2 | Acceso real desde la interfaz | H1 | Completado |
 | H3 | Vehículo y orden de extremo a extremo | H2 | Completado |
-| H4 | Diagnóstico, presupuesto y autorización | H3 | Pendiente |
+| H4 | Diagnóstico, presupuesto y autorización | H3 | Completado |
 | H5 | Reparación, cierre, entrega y margen | H4 | Pendiente |
 | H6 | Documentos descargables | H4; resumen requiere H5 | Pendiente |
 | H7 | Canales confirmados y avisos reales | H5 | Pendiente |
@@ -105,15 +105,15 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 
 ### H4. Diagnóstico, presupuestos y decisiones — HU-03, HU-04 y HU-05
 
-- [ ] Guardar diagnóstico, autor y fecha; permitir correcciones solo hasta la primera publicación.
-- [ ] Publicar una versión completa, con al menos un renglón, cantidades positivas, precios no negativos, vencimiento futuro y total calculado en servidor. No persistir borradores de presupuesto.
-- [ ] Generar versiones correlativas bajo bloqueo de la orden. Conservar inmutables contenido, total y renglones publicados.
-- [ ] Mostrar al cliente versiones históricas, última versión publicada y autorización operativa como conceptos distintos.
-- [ ] Implementar aceptar/rechazar/solicitar revisión: solo titular, última versión pendiente, una vez y antes de vencer. Usar un reloj inyectable para probar límites temporales.
-- [ ] Validar y actualizar decisión, decisor, fecha y autorización dentro de una sola transacción con bloqueo de la orden, compartido por publicación y decisión.
-- [ ] Aplicar el efecto de rechazo/revisión inicial y de adicionales: un rechazo inicial cierra sin reparación; rechazar o revisar un adicional conserva la autorización anterior.
-- [ ] Construir pantallas de diagnóstico, edición previa a publicación, consulta de versiones y decisión autenticada. Los estados del servidor gobiernan las acciones disponibles.
-- [ ] Probar dos decisiones simultáneas, publicación concurrente con aceptación, versión sustituida, vencimiento exacto, respuesta repetida e intento de modificar una versión publicada.
+- [x] Guardar diagnóstico, autor y fecha; permitir correcciones solo hasta la primera publicación.
+- [x] Publicar una versión completa, con al menos un renglón, cantidades positivas, precios no negativos, vencimiento futuro y total calculado en servidor. No persistir borradores de presupuesto.
+- [x] Generar versiones correlativas bajo bloqueo de la orden. Conservar inmutables contenido, total y renglones publicados.
+- [x] Mostrar al cliente versiones históricas, última versión publicada y autorización operativa como conceptos distintos.
+- [x] Implementar aceptar/rechazar/solicitar revisión: solo titular, última versión pendiente, una vez y antes de vencer. Usar un reloj inyectable para probar límites temporales.
+- [x] Validar y actualizar decisión, decisor, fecha y autorización dentro de una sola transacción con bloqueo de la orden, compartido por publicación y decisión.
+- [x] Aplicar el efecto de rechazo/revisión inicial y de adicionales: un rechazo inicial cierra sin reparación; rechazar o revisar un adicional conserva la autorización anterior.
+- [x] Construir pantallas de diagnóstico, edición previa a publicación, consulta de versiones y decisión autenticada. Los estados del servidor gobiernan las acciones disponibles.
+- [x] Probar dos decisiones simultáneas, publicación concurrente con aceptación, versión sustituida, vencimiento exacto, respuesta repetida e intento de modificar una versión publicada.
 
 **Cierre:** un adicional sin aceptar nunca habilita trabajo nuevo; una aceptación anterior sigue operativa aunque venza su plazo de respuesta. No pueden quedar dos autorizaciones operativas actuales por una carrera entre solicitudes.
 
@@ -247,6 +247,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 07/11/2026 | H0 y H1 | Tres servicios saludables; esquema y precarga idempotente; 12 pruebas sin fallos y persistencia tras reinicio | D:/Code/taller-ordenes/docs/VERIFICACION_H0_H1.md (estado local) | H2: login, sesión y permisos |
 | 07/11/2026 | H2 / HU-01 | Login, sesión, CSRF, perfiles y revocación; 26 pruebas sin fallos y navegador real con tres perfiles | D:/Code/taller-ordenes/docs/VERIFICACION_H2.md (estado local) | H3: vehículos y órdenes |
 | 07/11/2026 | H3 / HU-11 y HU-02 | Vehículos, órdenes, titularidad y concurrencia; 37 pruebas y navegador aislado con reinicio | Etiqueta local h3-base-operativa; docs/VERIFICACION_H3.md | H4: diagnóstico y presupuestos |
+| 07/11/2026 | H4 / HU-03, HU-04 y HU-05 | Diagnóstico, versiones completas, decisiones y autorización; 55 pruebas y navegador aislado con revisión, aceptación, adicional rechazado y reinicio | Etiqueta local h4-presupuestos; docs/VERIFICACION_H4.md | H5: reparación, cierre, entrega y margen |
 
 ## 7. Guion previsto para la demo
 
@@ -261,7 +262,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H3 están implementados en D:/Code/taller-ordenes. Continuar por H4: diagnóstico, publicación de presupuestos completos versionados y decisión del cliente, manteniendo la autorización operativa y resolviendo concurrencia. El recorrido de acceso, vehículo y apertura ya funciona. Antes de usar una cuenta se establece su contraseña individual con scripts/establecer-clave.ps1.
+H0–H4 están implementados en D:/Code/taller-ordenes. Continuar por H5: inicio de reparación con alcance autorizado, trabajo realizado, previsualización/confirmación de cierre, entrega, cancelación y resultados exclusivos de Administración. El recorrido hasta la decisión del cliente ya funciona. Las cuentas conservan las claves establecidas mediante scripts/establecer-clave.ps1.
 
 ## 9. Referencias técnicas consultadas
 
