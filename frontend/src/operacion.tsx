@@ -3,6 +3,7 @@ import * as api from './api';
 import type { Sesion } from './api';
 import {useResource,ErrorBox} from './recursos';
 import {Presupuestos} from './presupuestos';
+import {Ejecucion} from './ejecucion';
 import './presupuestos.css';
 
 interface Cuenta { id:number; nombre:string; correo:string }
@@ -183,5 +184,6 @@ function OrderDetail(props:Props) {
           <dt>Responsable</dt><dd>{resource.data.responsableNombre}</dd><dt>Actualización</dt><dd>{fecha(resource.data.actualizadoEn)}</dd></dl></section></div>
       <section className="panel form-panel"><h2>Motivo de ingreso</h2><p className="multiline">{resource.data.motivoIngreso}</p></section>
       <Presupuestos ordenId={resource.data.id} perfil={props.session.usuario.perfil} onChanged={resource.reload} onExpired={props.onExpired}/>
+      <Ejecucion ordenId={resource.data.id} perfil={props.session.usuario.perfil} onChanged={resource.reload} onExpired={props.onExpired}/>
     </>}</>;
 }

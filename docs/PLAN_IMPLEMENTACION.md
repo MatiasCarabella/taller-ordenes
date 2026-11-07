@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H4 implementados y verificados; acceso, vehículos, apertura, diagnóstico, presupuestos y decisión completos. Siguiente hito: H5 (reparación, cierre, entrega y margen).
+Estado: H0–H5 implementados y verificados; recorrido desde acceso hasta entrega y resultados completo. Siguiente hito: H6 (documentos descargables).
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -48,7 +48,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H2 | Acceso real desde la interfaz | H1 | Completado |
 | H3 | Vehículo y orden de extremo a extremo | H2 | Completado |
 | H4 | Diagnóstico, presupuesto y autorización | H3 | Completado |
-| H5 | Reparación, cierre, entrega y margen | H4 | Pendiente |
+| H5 | Reparación, cierre, entrega y margen | H4 | Completado |
 | H6 | Documentos descargables | H4; resumen requiere H5 | Pendiente |
 | H7 | Canales confirmados y avisos reales | H5 | Pendiente |
 | H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Pendiente |
@@ -119,17 +119,17 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 
 ### H5. Reparación, cierre y resultados — HU-06, HU-08, HU-09, HU-10, HU-13 y HU-15
 
-- [ ] Implementar transiciones explícitas por acción y perfil, basadas en la Tabla 8. No exponer una actualización libre del campo `estado`.
-- [ ] Iniciar reparación solo con autorización aceptada de la misma orden; guardar trabajo y actualización durante `EN_REPARACION` sin habilitar adicionales no aceptados.
-- [ ] Permitir a Administración configurar tarifa positiva. Mantener fija la tarifa ya copiada en cierres anteriores.
-- [ ] Implementar previsualización de cierre sin persistirlo y confirmación transaccional. Revalidar condiciones y recalcular en servidor al confirmar; informar cualquier cambio relevante frente a la previsualización antes de cerrar.
-- [ ] Exigir autorización, trabajo final, costos/horas no negativos, tarifa válida y ausencia de propuestas pendientes no vencidas. Copiar ingreso y tarifa al cierre bajo una lectura consistente; fijar `finalizado_en` e inmovilizar sus datos.
-- [ ] Calcular CM, M y M% según R4, con redondeo decimal; permitir margen negativo y mostrar «No aplica» cuando el ingreso es cero. No agregar columnas para resultados derivados.
-- [ ] Registrar entrega sin cambiar fecha ni valores del cierre; una repetición no duplica resultados.
-- [ ] Permitir cancelación por Administración solo antes de reparar, con motivo y fecha; mantener rechazo/cancelación sin datos económicos de cierre.
-- [ ] Consultar margen por orden y período solo para Administración: `FINALIZADO` y `ENTREGADO` una vez, por `finalizado_en`; conteos separados de rechazadas/canceladas.
-- [ ] Convertir el período local a intervalo UTC semiabierto: inicio incluido y comienzo del día siguiente al final excluido. Calcular el porcentaje global desde los totales.
-- [ ] Completar pantallas de ejecución, previsualización, cierre, entrega, cancelación y resultados con filtros por fecha.
+- [x] Implementar transiciones explícitas por acción y perfil, basadas en la Tabla 8. No exponer una actualización libre del campo `estado`.
+- [x] Iniciar reparación solo con autorización aceptada de la misma orden; guardar trabajo y actualización durante `EN_REPARACION` sin habilitar adicionales no aceptados.
+- [x] Permitir a Administración configurar tarifa positiva. Mantener fija la tarifa ya copiada en cierres anteriores.
+- [x] Implementar previsualización de cierre sin persistirlo y confirmación transaccional. Revalidar condiciones y recalcular en servidor al confirmar; informar cualquier cambio relevante frente a la previsualización antes de cerrar.
+- [x] Exigir autorización, trabajo final, costos/horas no negativos, tarifa válida y ausencia de propuestas pendientes no vencidas. Copiar ingreso y tarifa al cierre bajo una lectura consistente; fijar `finalizado_en` e inmovilizar sus datos.
+- [x] Calcular CM, M y M% según R4, con redondeo decimal; permitir margen negativo y mostrar «No aplica» cuando el ingreso es cero. No agregar columnas para resultados derivados.
+- [x] Registrar entrega sin cambiar fecha ni valores del cierre; una repetición no duplica resultados.
+- [x] Permitir cancelación por Administración solo antes de reparar, con motivo y fecha; mantener rechazo/cancelación sin datos económicos de cierre.
+- [x] Consultar margen por orden y período solo para Administración: `FINALIZADO` y `ENTREGADO` una vez, por `finalizado_en`; conteos separados de rechazadas/canceladas.
+- [x] Convertir el período local a intervalo UTC semiabierto: inicio incluido y comienzo del día siguiente al final excluido. Calcular el porcentaje global desde los totales.
+- [x] Completar pantallas de ejecución, previsualización, cierre, entrega, cancelación y resultados con filtros por fecha.
 
 **Cierre:** el recorrido completo funciona desde la interfaz y el servidor impide transiciones, cierres y ediciones inválidas. El caso I=70.000, CR=25.000, H=2 y T=6.000 devuelve CM=12.000, M=33.000 y M%=47,14. Cambiar la tarifa no modifica ese cierre.
 
@@ -248,6 +248,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 07/11/2026 | H2 / HU-01 | Login, sesión, CSRF, perfiles y revocación; 26 pruebas sin fallos y navegador real con tres perfiles | D:/Code/taller-ordenes/docs/VERIFICACION_H2.md (estado local) | H3: vehículos y órdenes |
 | 07/11/2026 | H3 / HU-11 y HU-02 | Vehículos, órdenes, titularidad y concurrencia; 37 pruebas y navegador aislado con reinicio | Etiqueta local h3-base-operativa; docs/VERIFICACION_H3.md | H4: diagnóstico y presupuestos |
 | 07/11/2026 | H4 / HU-03, HU-04 y HU-05 | Diagnóstico, versiones completas, decisiones y autorización; 55 pruebas y navegador aislado con revisión, aceptación, adicional rechazado y reinicio | Etiqueta local h4-presupuestos; docs/VERIFICACION_H4.md | H5: reparación, cierre, entrega y margen |
+| 07/11/2026 | H5 / HU-06, HU-08, HU-09, HU-10, HU-13 y HU-15 | Reparación, cierre histórico, entrega, cancelación, tarifa y margen; 80 pruebas y navegador aislado con cambio de tarifa, adicional, privacidad y reinicio | Etiqueta local h5-cierre-resultados; docs/VERIFICACION_H5.md | H6: documentos descargables |
 
 ## 7. Guion previsto para la demo
 
@@ -262,7 +263,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H4 están implementados en D:/Code/taller-ordenes. Continuar por H5: inicio de reparación con alcance autorizado, trabajo realizado, previsualización/confirmación de cierre, entrega, cancelación y resultados exclusivos de Administración. El recorrido hasta la decisión del cliente ya funciona. Las cuentas conservan las claves establecidas mediante scripts/establecer-clave.ps1.
+H0–H5 están implementados en D:/Code/taller-ordenes. Continuar por H6: descarga de presupuestos publicados y resumen final, con datos históricos, identificación de autorización y permisos por titularidad. El recorrido hasta entrega y consulta de margen ya funciona. Las cuentas conservan las claves establecidas mediante scripts/establecer-clave.ps1.
 
 ## 9. Referencias técnicas consultadas
 

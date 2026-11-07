@@ -7,7 +7,7 @@ Fecha: 7 de noviembre de 2026.
 - JDBC/SQL y Flyway. V1 crea las cinco entidades; V2 agrega la FK circular a presupuesto de la misma orden.
 - Una cuenta Administración como máximo mediante índice funcional único. Su existencia y activación se gestionan con la utilidad local.
 - Las FK compuestas impiden titular incorrecto y autorización de otra orden. Los CHECK validan valores y coherencia local.
-- H3 valida perfiles activos, titularidad y altas concurrentes mediante servicios transaccionales. H4 implementa aceptación operativa, inmutabilidad de presupuestos y transiciones relacionadas. H5 incorpora cierre; las reglas entre filas se garantizan en servicios y no se consideran resueltas solo por el esquema.
+- H3 valida perfiles activos, titularidad y altas concurrentes mediante servicios transaccionales. H4 implementa aceptación operativa, inmutabilidad de presupuestos y transiciones relacionadas. H5 implementa cierre, entrega y resultados; las reglas entre filas se garantizan en servicios y no se consideran resueltas solo por el esquema.
 - Health público sin detalles; H2 habilita los endpoints de acceso y protege las áreas por perfil. No existe una cuenta web predeterminada.
 - Secretos aleatorios en archivos protegidos excluidos de Git, montados como secretos Compose; estos montajes no son un gestor externo de secretos.
 - Las cuentas ficticias se crean inactivas con hashes de contraseñas aleatorias descartadas; la persona establece su contraseña en la utilidad interactiva antes de activarlas.
@@ -21,3 +21,10 @@ Fecha: 7 de noviembre de 2026.
 - H4: versiones completas e inmutables, sin borradores persistidos. Solo aceptar reemplaza la autorización; rechazar/revisar/vencer un adicional conserva la anterior.
 - H4: el servidor usa BigDecimal, redondea HALF_UP cada subtotal y luego suma; rechaza precisión/desbordamiento antes de guardar. La vista previa no escribe y publicar recalcula.
 - H4: el reloj se consulta después del bloqueo, con la misma precisión de milisegundos que DATETIME(3). La respuesta exige ahora < venceEn; una aceptación existente no caduca con ese plazo.
+
+- H5: inicio, trabajo, cierre, entrega y cancelación usan el bloqueo de la orden compartido con presupuestos. Tarifa se lee con FOR SHARE; su cambio solo bloquea la fila de Administración.
+- H5: confirmación de cierre firmada en memoria por diez minutos, ligada al actor, datos y contexto revisados. No agrega tablas ni borradores; se recalcula y valida al confirmar. Reiniciar exige otra vista previa.
+- H5: el avance exige declaración explícita del Personal sobre el alcance autorizado y verifica su ID actual; no interpreta el texto ni incorpora detalle de consumos.
+- H5: solo Administración recibe margen y configura tarifa. La consulta compartida excluye costos, horas y tarifa; Personal ve valores necesarios en la vista previa de cierre.
+- H5: reporte por finalizado_en en intervalo local semiabierto, cierre y entrega sin duplicación; rechazadas por actualizado_en y canceladas por cancelado_en, en conteos separados. Porcentaje global desde totales y CM redondeado por orden antes de sumar.
+- H5: los derivados monetarios grandes se conservan decimales; frontend usa BigInt para formatear la parte entera sin perder centavos. Consultar el mismo período fuerza una nueva lectura del reporte.

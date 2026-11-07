@@ -5,6 +5,7 @@ import type { Perfil, Sesion } from './api';
 import './styles.css';
 import './operacion.css';
 import { Operacion } from './operacion';
+import { Resultados } from './resultados';
 
 const names: Record<Perfil, string> = {
   ADMINISTRACION: 'Administración', PERSONAL: 'Personal del taller', CLIENTE: 'Cliente',
@@ -12,7 +13,7 @@ const names: Record<Perfil, string> = {
 type Page = string;
 const currentPage = (): Page => {
   const path=location.pathname;
-  return ['/ingresar','/inicio','/cuenta','/estado','/vehiculos','/ordenes','/ordenes/nueva'].includes(path)||/^\/(vehiculos|ordenes)\/[1-9]\d*$/.test(path) ? path+location.search : '/inicio';
+  return ['/ingresar','/inicio','/cuenta','/estado','/vehiculos','/ordenes','/ordenes/nueva','/resultados'].includes(path)||/^\/(vehiculos|ordenes)\/[1-9]\d*$/.test(path) ? path+location.search : '/inicio';
 };
 const hour = (date: string) => new Intl.DateTimeFormat('es-AR', {
   timeZone: 'America/Argentina/Buenos_Aires', hour: '2-digit', minute: '2-digit',
@@ -130,13 +131,13 @@ function App() {
       !session ? <Login onSubmit={signIn} busy={busy} error={error} notice={notice}/> :
       <div className="workspace">
         <nav className="sidebar" aria-label="Navegación principal">
-          <p className="eyebrow">Mi espacio</p>{link('/inicio', 'Inicio')}{link('/ordenes',session.usuario.perfil==='CLIENTE'?'Mis órdenes':'Órdenes')}{link('/vehiculos',session.usuario.perfil==='CLIENTE'?'Mis vehículos':'Vehículos')}{link('/cuenta', 'Mi cuenta')}
+          <p className="eyebrow">Mi espacio</p>{link('/inicio', 'Inicio')}{link('/ordenes',session.usuario.perfil==='CLIENTE'?'Mis órdenes':'Órdenes')}{link('/vehiculos',session.usuario.perfil==='CLIENTE'?'Mis vehículos':'Vehículos')}{session.usuario.perfil==='ADMINISTRACION'&&link('/resultados','Resultados y tarifa')}{link('/cuenta', 'Mi cuenta')}
           <div className="sidebar-profile"><span className="avatar" aria-hidden="true">{session.usuario.nombre.charAt(0)}</span>
             <div><strong>{session.usuario.nombre}</strong><small>{names[session.usuario.perfil]}</small></div></div>
         </nav>
         <main className="content">
           {error && <p className="alert" role="alert">{error}</p>}
-          {page.startsWith('/vehiculos')||page.startsWith('/ordenes') ? <Operacion page={page} session={session} navigate={navigate} onExpired={expired}/> : page === '/cuenta' ? <>
+          {page==='/resultados'?<Resultados perfil={session.usuario.perfil} onExpired={expired} navigate={navigate}/>:page.startsWith('/vehiculos')||page.startsWith('/ordenes') ? <Operacion page={page} session={session} navigate={navigate} onExpired={expired}/> : page === '/cuenta' ? <>
             <p className="eyebrow">Mi cuenta</p><h1>Tus datos de acceso</h1>
             <p className="lead">Esta es la cuenta con la que ingresaste al taller.</p>
             <section className="panel" aria-label="Datos de la cuenta">

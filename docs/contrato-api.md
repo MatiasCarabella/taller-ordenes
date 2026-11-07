@@ -1,6 +1,6 @@
 # Contrato de acceso y convenciones de API
 
-Versión implementada: 0.3 — 7 de noviembre de 2026.
+Versión implementada: 0.4 — 7 de noviembre de 2026.
 
 ## Endpoints disponibles
 
@@ -17,7 +17,7 @@ Versión implementada: 0.3 — 7 de noviembre de 2026.
 
 El contexto devuelto por login, me e inicio contiene `usuario` (id, nombre, correo, perfil), `iniciadaEn`, `limiteAbsoluto` y `vencePorInactividadEn`. Las fechas son ISO 8601 UTC. No contiene hashes, huellas de credencial, contraseña, tokens de canal, costos, tarifa ni margen.
 
-El perfil se obtiene de la BDD. Enviar otro perfil en JSON no otorga permisos. Cada área se autoriza en la API; ocultar navegación no es el control de acceso. H3 incorpora vehículos y órdenes con comprobaciones de titularidad: ver [API de operaciones](api-operaciones.md). H4 agrega [diagnóstico, presupuestos y decisiones](api-presupuestos.md).
+El perfil se obtiene de la BDD. Enviar otro perfil en JSON no otorga permisos. Cada área se autoriza en la API; ocultar navegación no es el control de acceso. H3 incorpora vehículos y órdenes con comprobaciones de titularidad: ver [API de operaciones](api-operaciones.md). H4 agrega [diagnóstico, presupuestos y decisiones](api-presupuestos.md). H5 incorpora [reparación, cierre, entrega y resultados](api-ejecucion.md).
 
 ## Sesión y CSRF
 

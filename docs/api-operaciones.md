@@ -35,7 +35,7 @@ Ambos listados admiten q (hasta 100 caracteres), clienteId opcional, page desde 
 
 Vehículos busca dominio normalizado, marca, modelo o titular; ordena por dominio/ID. Órdenes busca dominio normalizado, cliente o motivo y admite estado y vehiculoId; ordena por ingreso/ID descendentes. Los caracteres de comodín se buscan literalmente mediante parámetros SQL escapados. Las órdenes de un vehículo ajeno al Cliente también se rechazan por titularidad.
 
-Estados de filtro: RECIBIDO, DIAGNOSTICADO, PENDIENTE_APROBACION, APROBADO, EN_REPARACION, FINALIZADO, ENTREGADO, RECHAZADO y CANCELADO. H3 implementa la apertura RECIBIDO. H4 incorpora DIAGNOSTICADO, PENDIENTE_APROBACION, APROBADO y RECHAZADO mediante [diagnóstico y presupuestos](api-presupuestos.md). Las acciones de reparación, cierre, entrega y cancelación corresponden a H5.
+Estados de filtro: RECIBIDO, DIAGNOSTICADO, PENDIENTE_APROBACION, APROBADO, EN_REPARACION, FINALIZADO, ENTREGADO, RECHAZADO y CANCELADO. H3 implementa la apertura RECIBIDO. H4 incorpora DIAGNOSTICADO, PENDIENTE_APROBACION, APROBADO y RECHAZADO mediante [diagnóstico y presupuestos](api-presupuestos.md). H5 implementa [reparación, cierre, entrega y cancelación](api-ejecucion.md).
 
 ## Errores de negocio
 

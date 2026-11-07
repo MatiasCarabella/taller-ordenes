@@ -1,6 +1,6 @@
 # Gestión de órdenes para talleres
 
-Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa el entorno Docker, el esquema, la utilidad local de cuentas y el acceso real por perfiles con sesión del servidor. Incluye registro/consulta de vehículos y apertura/consulta de órdenes. Incluye diagnóstico, presupuestos completos versionados y decisión del cliente. El siguiente incremento incorpora reparación, cierre, entrega y margen.
+Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. El siguiente incremento incorpora documentos descargables.
 
 ## Requisitos
 
@@ -36,7 +36,7 @@ Los Dockerfiles fijan las imágenes oficiales por digest. El frontend tiene lock
 
 Flyway usa una cuenta de migraciones distinta de la aplicación. V1 crea Usuario, Vehículo, Orden, Presupuesto y Renglón; V2 agrega la FK compuesta de autorización. Flyway valida migraciones existentes y no las repite al reiniciar. No editar una migración ya aplicada: agregar otra.
 
-Las FK compuestas impiden que una orden use el vehículo de otro titular o una autorización de otra orden. Existen restricciones de dominio, unicidad, tokens completos y datos de cierre. Los servicios de H3/H4 validan perfiles referenciados, titularidad, presupuestos inmutables y decisiones concurrentes; H5 agrega las reglas de cierre, según [las decisiones iniciales](docs/decisiones-iniciales.md).
+Las FK compuestas impiden que una orden use el vehículo de otro titular o una autorización de otra orden. Existen restricciones de dominio, unicidad, tokens completos y datos de cierre. Los servicios de H3/H4 validan perfiles referenciados, titularidad, presupuestos inmutables y decisiones concurrentes; H5 garantiza transiciones y cierres consistentes, según [las decisiones iniciales](docs/decisiones-iniciales.md).
 
 Las cuentas MySQL de aplicación, migraciones y respaldo tienen contraseñas diferentes. Los archivos viven en `.secrets/`, excluidos de Git y del contexto Docker. La cuenta de aplicación no tiene permisos de DDL ni DELETE. El script de inicialización de usuarios se ejecuta únicamente al crear un volumen nuevo: cambiar archivos de secretos no cambia automáticamente contraseñas de una base ya inicializada.
 
@@ -78,15 +78,23 @@ Desde Cliente: Mis órdenes → detalle → aceptar, rechazar o solicitar revisi
 
 Cada propuesta incluye todo el alcance; la nueva versión parte de la última publicada para facilitar su revisión. Los importes se calculan en servidor con decimales y HALF_UP por renglón. Los plazos se ingresan y muestran en hora de Buenos Aires. Si otra operación cambia la versión o autorización, se debe actualizar y revisar antes de publicar. Ver [API de presupuestos](docs/api-presupuestos.md).
 
+## Reparación, cierre y resultados
+
+Personal abre el detalle de una orden aprobada y confirma Iniciar reparación. Durante la ejecución guarda el trabajo y declara que corresponde a la versión autorizada. Preparar cierre permite cargar costo total de repuestos y horas; Revisar cierre muestra trabajo, ingreso autorizado, tarifa vigente y costos antes de confirmar. Un presupuesto pendiente con plazo vigente impide finalizar.
+
+La confirmación vuelve a verificar los valores. Si cambian alcance, trabajo, última propuesta o tarifa, hay que revisar otra vista previa. El cierre fija sus datos; solo queda Registrar entrega, sin reapertura ni edición histórica. Cliente consulta trabajo, fechas y venta final sin datos internos.
+
+Administración dispone de Resultados y tarifa: configura una tarifa positiva, consulta el margen por período de finalización y despliega los valores de cada orden. La entrega no duplica resultados ni cambia su período. El reporte separa rechazadas/canceladas y calcula el porcentaje desde los totales. Administración también puede cancelar con motivo antes de iniciar reparación. Ver [API de ejecución y resultados](docs/api-ejecucion.md).
+
 ## Verificación
 
 ```powershell
 ./scripts/verificar.ps1
 ```
 
-En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 55 pruebas, incluidas sesiones, CSRF, permisos, titularidad, precisión monetaria, vencimientos y publicaciones/decisiones concurrentes; ver [la evidencia de H4](docs/VERIFICACION_H4.md).
+En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 80 pruebas, incluidas sesiones, CSRF, titularidad, precisión, vencimientos, cierres y operaciones concurrentes; ver [la evidencia de H5](docs/VERIFICACION_H5.md).
 
-Las pruebas del esquema comprueban cinco entidades, migraciones repetibles sin cambios, dominio único, titular correcto, Administración única, tarifa por perfil, autorización de la misma orden, unicidad de versiones, respuestas completas, renglones válidos, tokens, cierres y límites decimales. H4 prueba estados, dinero y concurrencia de presupuestos sobre servicios reales; H5 incorpora el cierre y sus cálculos.
+Las pruebas del esquema comprueban cinco entidades, migraciones repetibles sin cambios, dominio único, titular correcto, Administración única, tarifa por perfil, autorización de la misma orden, unicidad de versiones, respuestas completas, renglones válidos, tokens, cierres y límites decimales. H4 prueba estados, dinero y concurrencia de presupuestos sobre servicios reales; H5 verifica cierre, copia histórica de tarifa, períodos y margen.
 
 ## Operación local
 
