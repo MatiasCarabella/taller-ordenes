@@ -1,0 +1,83 @@
+name: taller-ordenes
+services:
+  db:
+    image: mysql:8.4.13@sha256:a81d043930e51745522bd5c430961cf8286f0a23f0a9a2a6e0108f7ea71b0902
+    environment:
+      MYSQL_DATABASE: taller
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      TZ: UTC
+    command: ["--default-time-zone=+00:00", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    secrets: [db_root_password, db_app_password, db_migration_password, db_backup_password]
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./infra/mysql/10-users.sh:/docker-entrypoint-initdb.d/10-users.sh:ro
+    networks: [database]
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=$$(cat /run/secrets/db_app_password) mysql --protocol=TCP -h 127.0.0.1 -u taller_app -D taller -Nse 'SELECT 1' >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+    restart: unless-stopped
+  backend:
+    build:
+      context: .
+      dockerfile: infra/backend.Dockerfile
+    environment:
+      SESSION_COOKIE_SECURE: "${SESSION_COOKIE_SECURE:-false}"
+      SPRING_CONFIG_IMPORT: configtree:/run/secrets/
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/taller?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
+      SPRING_DATASOURCE_USERNAME: taller_app
+      SPRING_FLYWAY_USER: taller_migrator
+      TZ: UTC
+    secrets: [db_app_password, db_migration_password]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [database, web]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD", "java", "-cp", "/app/health", "Healthcheck"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+  frontend:
+    build:
+      context: .
+      dockerfile: infra/frontend.Dockerfile
+    ports:
+      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [web]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz >/dev/null"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+networks:
+  database:
+    internal: true
+  web:
+volumes:
+  mysql_data:
+secrets:
+  db_root_password:
+    file: ./.secrets/db_root_password
+  db_app_password:
+    file: ./.secrets/db_app_password
+  db_migration_password:
+    file: ./.secrets/db_migration_password
+  db_backup_password:
+    file: ./.secrets/db_backup_password

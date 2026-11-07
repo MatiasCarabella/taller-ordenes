@@ -1,0 +1,9 @@
+.secrets/
+.env
+**/target/
+**/node_modules/
+frontend/dist/
+*.log
+.idea/
+.vscode/
+.DS_Store
