@@ -68,6 +68,8 @@ El contenedor de mantenimiento monta el socket Docker durante la operación y ne
 
 El destino debe ser nuevo. La herramienta valida y descifra, clona el bundle sin usar el repositorio de origen, y selecciona el commit del manifiesto. Genera credenciales MySQL nuevas en ese entorno; conserva los hashes de las cuentas importadas. Inicia una BDD vacía con volumen propio y solo acepta importar en un proyecto `taller-recuperacion-*`. Rechaza la base principal y las bases no vacías. Después compara las seis tablas, construye las aplicaciones y comprueba sus healthchecks. Los canales externos quedan deshabilitados para impedir que el ensayo compita con el bot activo o envíe avisos reales.
 
+Para obtener futuras versiones desde el código recuperado, reemplazar el origen temporal del bundle: `git remote set-url origin https://github.com/MatiasCarabella/taller-ordenes.git`. Revisar las instrucciones de la versión y hacer un respaldo antes de actualizar.
+
 El resultado `recuperacion.json` registra el proyecto, puerto, código recuperado y duración hasta servicios saludables. El resultado de importación informa la antigüedad del respaldo; compararla con RPO 24 h y la duración con RTO 4 h. Las medidas de un ensayo local no garantizan recuperación de cualquier incidente.
 
 Validar cuentas, relaciones, autorización de presupuestos, importes históricos y descargas. Para retirar el ensayo, usar exclusivamente el nombre de proyecto registrado y su Compose: `docker compose --project-directory RUTA_CODIGO -p PROYECTO_RECUPERACION down -v`. Comprobar antes que el proyecto comienza por `taller-recuperacion-`; nunca aplicar ese comando al proyecto principal.

@@ -34,6 +34,8 @@ Ensayos medidos con código df5c293 y respaldos asociados:
 | Recuperación de la instalación | 88,118 s | 70,845 s | Seis tablas coincidentes; arranque desde cero |
 | Recuperación de caso ficticio conocido | 36,234 s | 67,408 s | Seis tablas coincidentes; autorización y margen conservados |
 
+La versión final etiquetada h8-recuperacion (8d9ef90) se volvió a respaldar y recuperar desde cero: servicios saludables en 59,126 s. Se comprobó que su archivo .env conserva proyecto y puerto aislados sin depender de variables externas; /api/health respondió UP.
+
 El caso conocido se creó únicamente en un entorno recuperado aislado y se volvió a respaldar/restaurar en otro proyecto independiente: ingreso 100.000, repuestos 20.000, dos horas a tarifa histórica 6.000, margen directo 68.000. La consulta después de la segunda restauración comprobó presupuesto autorizado y aceptado, y todos esos valores. No es un dato real de negocio.
 
 Las duraciones del ensayo están por debajo del objetivo RTO 4 h y la antigüedad de los respaldos recuperados por debajo del objetivo RPO 24 h. Son mediciones locales con datos pequeños y dependencias Docker disponibles; no prueban garantía ante incidentes ni cumplimiento continuo del RPO. La copia es manual por decisión del usuario.
@@ -42,6 +44,6 @@ La retención 7 diarias/4 semanales y 3 mensuales del destino externo opcional e
 
 ## Versionado y publicación
 
-Puntos de recuperación: h8-operacion-base para la implementación inicial, y h8-recuperacion para el cierre con evidencia. El repositorio público contiene código y documentación. Antes de publicarlo se revisan todos los blobs de su historial contra credenciales locales y patrones de claves privadas, y se comprueba que no existan archivos de secretos o respaldos versionados. La auditoría informa solo cantidades y hallazgos, nunca valores secretos.
+Puntos de recuperación: h8-operacion-base para la implementación inicial, y h8-recuperacion para el cierre con evidencia. Repositorio público creado: [MatiasCarabella/taller-ordenes](https://github.com/MatiasCarabella/taller-ordenes). Contiene código y documentación. Antes de publicarlo se revisan todos los blobs de su historial contra credenciales locales y patrones de claves privadas, y se comprueba que no existan archivos de secretos o respaldos versionados. La auditoría informa solo cantidades y hallazgos, nunca valores secretos.
 
 Los registros detallados de ejecución están en verification-h8-*.log, excluidos de Git. Los proyectos temporales de recuperación se retiran al concluir las comprobaciones; la instancia principal sigue disponible en http://localhost:8080.
