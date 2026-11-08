@@ -253,6 +253,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 07/11/2026 | H5 / HU-06, HU-08, HU-09, HU-10, HU-13 y HU-15 | Reparación, cierre histórico, entrega, cancelación, tarifa y margen; 80 pruebas y navegador aislado con cambio de tarifa, adicional, privacidad y reinicio | Etiqueta local h5-cierre-resultados; docs/VERIFICACION_H5.md | H6: documentos descargables |
 | 07/11/2026 | H6 / HU-14 | Descargas privadas de versiones y resumen con alcance autorizado; 94 pruebas, navegador aislado y revisión de PDF extensos con cien renglones | Etiqueta local h6-documentos; docs/VERIFICACION_H6.md | H7: canales confirmados y avisos |
 | 08/11/2026 | H7 / HU-12 y HU-07 | Gestión de canales, tokens y avisos posteriores al commit; 131 pruebas y navegador con proveedores deshabilitados y simulación explícita de interacción | Etiqueta local h7-canales-base; docs/VERIFICACION_H7.md | Configurar proveedores y comprobar recepción real para cerrar H7 |
+| 08/11/2026 | H7 / conectividad real | Configuración cargada; autenticación SMTP con TLS y bot Telegram verificado sin webhook. Diagnóstico sin envíos ni exposición de claves | docs/VERIFICACION_H7.md | Confirmar canales en Cliente y comprobar recepción de avisos |
 
 ## 7. Guion previsto para la demo
 
@@ -267,7 +268,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H7 están implementados en D:/Code/taller-ordenes. H7 requiere completar la prueba real: preparar SMTP y bot, guardar credenciales con scripts/configurar-canales.ps1, confirmar ambos canales en Mi cuenta y verificar recepción de avisos al publicar. Hasta entonces H7 no se marca cerrado. Después continúa H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
+H0–H7 están implementados en D:/Code/taller-ordenes. SMTP y bot ya están configurados y su conectividad fue validada. H7 requiere confirmar ambos canales en Mi cuenta del Cliente y verificar recepción de avisos al publicar. Hasta entonces H7 no se marca cerrado. Después continúa H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
 
 ## 9. Referencias técnicas consultadas
 

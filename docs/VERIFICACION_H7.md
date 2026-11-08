@@ -51,9 +51,15 @@ La interacción de confirmación, enlace y desvinculación se probó con respues
 
 Vista de escritorio y 390×844, sin desborde ni errores JavaScript. Una sesión invalidada en el servidor llevó al login al actualizar canales. Se retiraron únicamente contenedores, red y volumen del proyecto temporal.
 
+## Conectividad real comprobada
+
+El 8 de noviembre de 2026 el usuario cargó la configuración mediante el asistente y aplicó los servicios. Los tres contenedores permanecen saludables. Un diagnóstico con los adaptadores de la aplicación confirmó autenticación y conexión SMTP bajo TLS, e identidad del bot de Telegram con ausencia de webhook (CONECTADO).
+
+El diagnóstico solo abrió conexiones y consultó getMe/getWebhookInfo: no envió mensajes ni consumió actualizaciones del bot. No se imprimieron ni registraron credenciales, direcciones, chats o tokens. Esta comprobación valida configuración y conectividad; la recepción del código y de avisos todavía requiere el recorrido de la cuenta Cliente.
+
 ## Prueba real pendiente
 
-- [ ] Configuración local SMTP y bot propio, sin compartir claves.
+- [x] Configuración local SMTP y bot propio, sin compartir claves.
 - [ ] Recepción del código y confirmación de correo en una cuenta de prueba autorizada.
 - [ ] Recepción /start y confirmación de vínculo en Telegram privado.
 - [ ] Publicación de presupuesto con recepción efectiva de ambos avisos, además del resultado al actor.
