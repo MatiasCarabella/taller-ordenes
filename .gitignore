@@ -7,3 +7,13 @@ frontend/dist/
 .idea/
 .vscode/
 .DS_Store
+
+# Artefactos operativos privados
+.backups/
+.recovery/
+*.age
+*.bundle
+*.sql
+*.sql.gz
+*.pem
+*.key

@@ -5,3 +5,13 @@
 **/node_modules
 frontend/dist
 *.log
+
+# Artefactos operativos privados
+.backups/
+.recovery/
+*.age
+*.bundle
+*.sql
+*.sql.gz
+*.pem
+*.key

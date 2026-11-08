@@ -1,0 +1,19 @@
+# Superposición HTTPS: certificados propios, sin secretos versionados.
+services:
+  backend:
+    environment:
+      SESSION_COOKIE_SECURE: "true"
+  frontend:
+    ports: !override
+      - "${HTTPS_BIND:-127.0.0.1}:${HTTPS_PORT:-8443}:8443"
+      - "${HTTP_BIND:-127.0.0.1}:${HTTP_PORT:-8080}:8080"
+    volumes:
+      - ./infra/nginx-tls.conf:/etc/nginx/nginx.conf:ro
+    secrets:
+      - tls_certificate
+      - tls_private_key
+secrets:
+  tls_certificate:
+    file: ./.secrets/tls/fullchain.pem
+  tls_private_key:
+    file: ./.secrets/tls/privkey.pem
