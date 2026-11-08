@@ -1,4 +1,6 @@
 #!/bin/sh
+# MySQL puede cargar este archivo con source: aislar opciones y variables.
+(
 set -eu
 # Generated secrets contain hexadecimal characters only; reject other input.
 app_password="$(cat /run/secrets/db_app_password)"
@@ -15,3 +17,5 @@ GRANT SELECT, INSERT, UPDATE ON taller.* TO 'taller_app'@'%';
 GRANT ALL PRIVILEGES ON taller.* TO 'taller_migrator'@'%';
 GRANT SELECT, SHOW VIEW, TRIGGER, EVENT ON taller.* TO 'taller_backup'@'%';
 SQL
+
+)

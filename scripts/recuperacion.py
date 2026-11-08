@@ -205,8 +205,14 @@ def unpack(args):
             target = Path('/recovered')
             if any(target.iterdir()):
                 raise ValueError('El destino de código recuperado debe estar vacío')
-            run(['git', 'clone', str(work / 'code/source.bundle'), str(target)])
-            run(['git', '-c', 'safe.directory=' + str(target), '-C', str(target), 'checkout', '--detach', metadata['commit']])
+            # El código es público: permisos de lectura para usuarios no-root de los contenedores.
+            # Los temporales descifrados y la identidad mantienen umask 077.
+            previous = os.umask(0o022)
+            try:
+                run(['git', 'clone', str(work / 'code/source.bundle'), str(target)])
+                run(['git', '-c', 'safe.directory=' + str(target), '-C', str(target), 'checkout', '--detach', metadata['commit']])
+            finally:
+                os.umask(previous)
             print(json.dumps({'codeRecovered': True, 'commit': metadata['commit']}))
             return
         # La BDD se importa solo en un contenedor de recuperación explícito, nunca en la principal.

@@ -2,6 +2,8 @@
 
 La instalación actual se ejecuta en Docker Desktop, en la máquina local. El despliegue remoto requiere un servidor, dominio y certificado propios. La superposición HTTPS se verifica en un entorno aislado; no publica automáticamente la aplicación en Internet.
 
+Por decisión del usuario, los respaldos se ejecutan manualmente. No se registra el job diario ni se configura un depósito externo en esta instalación; las instrucciones para habilitarlos quedan disponibles abajo.
+
 ## Arranque y actualización
 
 Requisitos: Docker Desktop con contenedores Linux y Compose v2.24.4 o superior (soporte de `!override`), Git y Windows PowerShell. Java, Maven, Node, MySQL, Python y age se ejecutan dentro de contenedores.
