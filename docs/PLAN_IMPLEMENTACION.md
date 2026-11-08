@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H6 completos. H7 implementado, con conectividad y ambos canales confirmados de forma real; falta comprobar los avisos de una publicación para cerrar el hito.
+Estado: H0–H7 completos. H7 incluye confirmación de canales y recepción de avisos reales por correo y Telegram, confirmada por el usuario. Siguiente hito: H8, despliegue seguro, respaldo y restauración.
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -50,7 +50,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H4 | Diagnóstico, presupuesto y autorización | H3 | Completado |
 | H5 | Reparación, cierre, entrega y margen | H4 | Completado |
 | H6 | Documentos descargables | H4; resumen requiere H5 | Completado |
-| H7 | Canales confirmados y avisos reales | H5 | Canales confirmados; pendiente aviso de negocio |
+| H7 | Canales confirmados y avisos reales | H5 | Completo: recepción real confirmada por el usuario |
 | H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Pendiente |
 | H9 | Demo y apartado académico con evidencia real | H8 | Pendiente |
 
@@ -155,7 +155,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 - [x] Construir gestión de canales, estados de confirmación y avisos de resultado. El portal sigue usable sin canales o con proveedores caídos.
 - [x] Probar tokens vencidos/reutilizados, finalidad incorrecta, vinculación concurrente, chat ya asociado, ausencia de canal, un canal fallido y caída de ambos proveedores.
 
-- [ ] Completar configuración local, confirmación y recepción real de correo/Telegram con una cuenta de prueba autorizada; registrar resultado.
+- [x] Completar configuración local, confirmación y recepción real de correo/Telegram con una cuenta de prueba autorizada; registrar resultado.
 
 **Cierre:** se verifica un correo y un Telegram reales con cuentas de prueba autorizadas. Los simuladores sirven para repetir fallos; la evidencia distingue qué se probó con proveedores reales y qué se simuló. No se añade historial de envíos ni reintento persistente.
 
@@ -255,6 +255,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 08/11/2026 | H7 / HU-12 y HU-07 | Gestión de canales, tokens y avisos posteriores al commit; 131 pruebas y navegador con proveedores deshabilitados y simulación explícita de interacción | Etiqueta local h7-canales-base; docs/VERIFICACION_H7.md | Configurar proveedores y comprobar recepción real para cerrar H7 |
 | 08/11/2026 | H7 / conectividad real | Configuración cargada; autenticación SMTP con TLS y bot Telegram verificado sin webhook. Diagnóstico sin envíos ni exposición de claves | docs/VERIFICACION_H7.md | Confirmar canales en Cliente y comprobar recepción de avisos |
 | 08/11/2026 | H7 / confirmaciones reales | Usuario confirmó correo y Telegram; BDD corrobora una cuenta activa con ambos canales confirmados | docs/VERIFICACION_H7.md | Publicar presupuesto de prueba y comprobar ambos avisos de negocio |
+| 08/11/2026 | H7 / cierre con avisos reales | Usuario confirmó recepción por correo y Telegram tras la prueba de negocio; BDD corrobora orden 1 con diagnóstico, versión 1 y estado ENTREGADO | Etiqueta local h7-avisos; docs/VERIFICACION_H7.md | H8: despliegue seguro, respaldo y restauración |
 
 ## 7. Guion previsto para la demo
 
@@ -269,7 +270,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H7 están implementados en D:/Code/taller-ordenes. SMTP y bot están configurados; conectividad y ambos canales del Cliente fueron verificados de forma real. Resta publicar un presupuesto desde Personal y comprobar la recepción de ambos avisos de negocio. Hasta entonces H7 no se marca cerrado. Después continúa H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
+H0–H7 están completos en D:/Code/taller-ordenes. SMTP y bot están configurados; se verificaron conectividad y confirmación de canales, y el usuario confirmó recepción real de ambos avisos tras la prueba de negocio. La orden de prueba quedó entregada con diagnóstico y versión de presupuesto registrados. El siguiente paso es H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
 
 ## 9. Referencias técnicas consultadas
 

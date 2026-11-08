@@ -1,6 +1,6 @@
 # Gestión de órdenes para talleres
 
-Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. Incluye descargas privadas de presupuestos y resumen final. H7 incorpora confirmación de canales y avisos por correo/Telegram; falta comprobar recepción con proveedores reales para cerrar el hito.
+Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. Incluye descargas privadas de presupuestos y resumen final. H7 incorpora confirmación de canales y avisos por correo/Telegram, con recepción real confirmada por el usuario. El siguiente hito es H8: despliegue seguro, respaldo y restauración.
 
 ## Requisitos
 
@@ -108,7 +108,7 @@ El entorno arranca con canales deshabilitados. Preparar el bot y SMTP, ejecutar 
 ./scripts/verificar.ps1
 ```
 
-En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 131 pruebas, incluidas sesiones, CSRF, titularidad, precisión, PDF, tokens de canal, concurrencia y fallas de proveedores; ver [la evidencia de H7](docs/VERIFICACION_H7.md). SMTP/Telegram se ensayan con transportes y servidores locales de prueba. La recepción real se registra por separado y sigue pendiente.
+En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 131 pruebas, incluidas sesiones, CSRF, titularidad, precisión, PDF, tokens de canal, concurrencia y fallas de proveedores; ver [la evidencia de H7](docs/VERIFICACION_H7.md). SMTP/Telegram se ensayan con transportes y servidores locales de prueba. La recepción real por ambos canales fue confirmada por el usuario y se registra por separado en la evidencia de H7.
 
 Las pruebas del esquema comprueban cinco entidades, migraciones repetibles sin cambios, dominio único, titular correcto, Administración única, tarifa por perfil, autorización de la misma orden, unicidad de versiones, respuestas completas, renglones válidos, tokens, cierres y límites decimales. H4 prueba estados, dinero y concurrencia de presupuestos sobre servicios reales; H5 verifica cierre, copia histórica de tarifa, períodos y margen.
 
@@ -122,7 +122,7 @@ docker compose up -d --wait
 
 Detener o bajar los contenedores sin eliminar volúmenes conserva la BDD. La eliminación de volúmenes destruye sus datos y no forma parte del arranque ni de los scripts de prueba.
 
-Las integraciones están implementadas y requieren configuración/verificación real. El acceso remoto HTTPS, respaldo externo y ensayo de recuperación corresponden a H8; este arranque escucha solo en la máquina local. En remoto deberá configurarse HTTPS y `SESSION_COOKIE_SECURE=true`. No reutilizar las cuentas ficticias como identidades reales.
+Las integraciones están implementadas y verificadas con los proveedores configurados en la instalación local; una instalación nueva debe seguir la guía de configuración de canales. El acceso remoto HTTPS, respaldo externo y ensayo de recuperación corresponden a H8; este arranque escucha solo en la máquina local. En remoto deberá configurarse HTTPS y `SESSION_COOKIE_SECURE=true`. No reutilizar las cuentas ficticias como identidades reales.
 
 ## Fuentes de las herramientas
 

@@ -80,7 +80,7 @@ Con una cuenta de prueba propia y ambos canales confirmados:
 3. Abrir el enlace al portal e ingresar para consultar/decidir.
 4. Registrar fecha, canales comprobados y resultado, sin copiar destinatarios, chats ni secretos al repositorio.
 
-La verificación real de H7 queda pendiente hasta completar este recorrido. Las pruebas con simuladores no la reemplazan.
+Este recorrido verifica la recepción real en cada instalación. En la instalación local del proyecto se completó el 8 de noviembre de 2026: el usuario confirmó recepción por correo y Telegram. El detalle y la distinción respecto de las pruebas automatizadas están en [VERIFICACION_H7.md](VERIFICACION_H7.md).
 
 ## Problemas de configuración
 

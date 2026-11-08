@@ -1,6 +1,6 @@
 # API de canales y avisos
 
-Implementación: H7 — 8 de noviembre de 2026. Validación local completada; recepción con proveedores reales pendiente.
+Implementación: H7 — 8 de noviembre de 2026. Validación local completada y recepción con proveedores reales confirmada por el usuario; ver [VERIFICACION_H7.md](VERIFICACION_H7.md).
 
 ## Canales propios
 

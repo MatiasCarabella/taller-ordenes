@@ -2,7 +2,7 @@
 
 Fecha: 8 de noviembre de 2026.
 
-Estado: implementación y validación local completadas. Falta configuración y recepción con proveedores reales para cerrar H7.
+Estado: H7 completo. Implementación, validación local, conectividad y confirmación de canales comprobadas; recepción real de avisos por correo y Telegram confirmada por el usuario.
 
 ## Implementación
 
@@ -61,19 +61,19 @@ El diagnóstico solo abrió conexiones y consultó getMe/getWebhookInfo: no envi
 
 El 8 de noviembre de 2026 el usuario informó que confirmó ambos canales. Se corroboró mediante consulta de cantidades: una cuenta Cliente activa, con correo confirmado y chat Telegram vinculado. El código de correo se ingresó únicamente en el portal y el vínculo fue procesado por el bot; no se compartieron códigos, claves o tokens en el chat. No se incorporan direcciones ni identificadores de chat a esta evidencia.
 
-La comprobación final pendiente es la publicación de una orden de prueba y recepción de ambos avisos de negocio. La cuenta todavía no tenía órdenes al efectuar esta revisión.
+Después de solicitar la publicación de un presupuesto de prueba y la comprobación de ambos avisos, el usuario respondió «Todo funcionando!». Se registra como confirmación del usuario de recepción efectiva por correo y Telegram; no se inspeccionaron sus bandejas ni conversaciones. Una consulta posterior de metadatos corroboró la orden 1 con diagnóstico guardado, última versión de presupuesto 1 y estado ENTREGADO. La consulta no expuso datos personales ni importes. Estos datos corroboran el recorrido de negocio; la recepción de mensajes se acredita con la confirmación del usuario.
 
-## Prueba real pendiente
+## Prueba real completada
 
 - [x] Configuración local SMTP y bot propio, sin compartir claves.
 - [x] Recepción del código y confirmación de correo en una cuenta de prueba autorizada.
 - [x] Recepción /start y confirmación de vínculo en Telegram privado.
-- [ ] Publicación de presupuesto con recepción efectiva de ambos avisos, además del resultado al actor.
+- [x] Publicación de presupuesto y recepción efectiva de ambos avisos confirmada por el usuario en respuesta a la prueba solicitada.
 
-Guía: [CONFIGURAR_CANALES.md](CONFIGURAR_CANALES.md). H7 no se marca completo hasta comprobar estos puntos.
+Guía: [CONFIGURAR_CANALES.md](CONFIGURAR_CANALES.md). H7 cerrado el 8 de noviembre de 2026 con la evidencia local y real diferenciada en este documento.
 
 ## Despliegue local y punto de recuperación
 
 Implementación instalada con docker compose up -d --wait. Backend, frontend y MySQL saludables, /api/health UP e interfaz de canales/avisos servida por el proxy. Se conservaron el contenedor MySQL original, taller-ordenes_mysql_data y las credenciales de las cuentas. No se ejecutó precarga ni reposición de claves en la instancia del usuario. Se comprobó la retirada del entorno temporal de navegador.
 
-Punto de recuperación de la implementación: etiqueta local h7-canales-base. El plan conserva H7 abierto hasta recepción real; ambas copias del plan coinciden.
+Punto de recuperación de la implementación: etiqueta local h7-canales-base. Cierre documentado con recepción real: etiqueta local h7-avisos. Ambas copias del plan coinciden y señalan H8 como siguiente hito.
