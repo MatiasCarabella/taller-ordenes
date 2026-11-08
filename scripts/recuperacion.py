@@ -194,6 +194,13 @@ def backup(args):
         shutil.rmtree(pending)
         print(json.dumps({'backup': stamp, 'commit': commit, 'verified': True, 'externalDirectoryCopied': args.external}))
 
+def validate_restore_target(db):
+    labels = json.loads(run(['docker', 'inspect', '--format', '{{json .Config.Labels}}', db]))
+    if not labels.get('com.docker.compose.project', '').startswith('taller-recuperacion-'):
+        raise ValueError('Solo se permite restaurar una BDD de taller-recuperacion-*')
+    if sql(db, 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=\'taller\';', True) != '0':
+        raise ValueError('La BDD de recuperación debe estar vacía')
+
 def unpack(args):
     # Solo descifra en tmpfs /work. El código recuperado se puede copiar a /recovered.
     source = Path('/input')
@@ -216,11 +223,7 @@ def unpack(args):
             print(json.dumps({'codeRecovered': True, 'commit': metadata['commit']}))
             return
         # La BDD se importa solo en un contenedor de recuperación explícito, nunca en la principal.
-        labels = json.loads(run(['docker', 'inspect', '--format', '{{json .Config.Labels}}', args.db]))
-        if not labels.get('com.docker.compose.project', '').startswith('taller-recuperacion-'):
-            raise ValueError('Solo se permite restaurar una BDD de taller-recuperacion-*')
-        if sql(args.db, 'SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=\'taller\';', True) != '0':
-            raise ValueError('La BDD de recuperación debe estar vacía')
+        validate_restore_target(args.db)
         with gzip.open(work / 'database/database.sql.gz') as f:
             p = sp.Popen(mysql_command(args.db, True), stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
             shutil.copyfileobj(f, p.stdin); p.stdin.close()

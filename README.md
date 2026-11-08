@@ -1,12 +1,12 @@
 # Gestión de órdenes para talleres
 
-Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. Incluye descargas privadas de presupuestos y resumen final. H7 incorpora confirmación de canales y avisos por correo/Telegram, con recepción real confirmada por el usuario. El siguiente hito es H8: despliegue seguro, respaldo y restauración.
+Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. Incluye descargas privadas de presupuestos y resumen final. H7 incorpora confirmación de canales y avisos por correo/Telegram, con recepción real confirmada por el usuario. H8 incorpora respaldos cifrados y recuperación comprobada. El siguiente hito es H9: demo y cierre académico.
 
 ## Requisitos
 
-Docker Desktop con motor Linux y Docker Compose v2. No hace falta instalar Java, Maven, Node ni MySQL para construir y ejecutar el proyecto. Las pruebas también se ejecutan dentro de Docker y crean un MySQL temporal independiente.
+Docker Desktop con motor Linux y Docker Compose v2.24.4 o superior (para la superposición HTTPS). No hace falta instalar Java, Maven, Node ni MySQL para construir y ejecutar el proyecto. Las pruebas también se ejecutan dentro de Docker y crean un MySQL temporal independiente.
 
-Repositorio local: `D:/Code/taller-ordenes`. El plan de trabajo está en [docs/PLAN_IMPLEMENTACION.md](docs/PLAN_IMPLEMENTACION.md). No se creó un remoto.
+Repositorio público: [MatiasCarabella/taller-ordenes](https://github.com/MatiasCarabella/taller-ordenes). El plan de trabajo está en [docs/PLAN_IMPLEMENTACION.md](docs/PLAN_IMPLEMENTACION.md).
 
 ## Arranque en Windows
 
@@ -122,7 +122,7 @@ docker compose up -d --wait
 
 Detener o bajar los contenedores sin eliminar volúmenes conserva la BDD. La eliminación de volúmenes destruye sus datos y no forma parte del arranque ni de los scripts de prueba.
 
-Las integraciones están implementadas y verificadas con los proveedores configurados en la instalación local; una instalación nueva debe seguir la guía de configuración de canales. El acceso remoto HTTPS, respaldo externo y ensayo de recuperación corresponden a H8; este arranque escucha solo en la máquina local. En remoto deberá configurarse HTTPS y `SESSION_COOKIE_SECURE=true`. No reutilizar las cuentas ficticias como identidades reales.
+Las integraciones están implementadas y verificadas con los proveedores configurados en la instalación local; una instalación nueva debe seguir la guía de configuración de canales. La [guía operativa de H8](docs/OPERACION_Y_RECUPERACION.md) documenta HTTPS, respaldos manuales cifrados, retención y recuperación; ver [evidencia](docs/VERIFICACION_H8.md). La tarea diaria y el depósito externo son opcionales y no están activados. Este arranque escucha solo en la máquina local. En remoto deberá configurarse HTTPS y `SESSION_COOKIE_SECURE=true`. No reutilizar las cuentas ficticias como identidades reales.
 
 ## Fuentes de las herramientas
 

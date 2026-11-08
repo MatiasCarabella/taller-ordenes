@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('recuperacion', Path(__file__).with_name('recuperacion.py'))
 r = importlib.util.module_from_spec(spec)
@@ -68,5 +69,14 @@ class RecoverySafetyTests(unittest.TestCase):
         (bucket / '20260102T020000Z').mkdir()
         with self.assertRaises(ValueError): r.rotate(bucket, 1, r'\d{8}T\d{6}Z')
         self.assertTrue(outside.exists())
+
+    def test_main_project_is_rejected_without_any_sql(self):
+        with patch.object(r, 'run', return_value=b'{"com.docker.compose.project":"taller-ordenes"}'), patch.object(r, 'sql') as sql:
+            with self.assertRaises(ValueError): r.validate_restore_target('simulated-main')
+            sql.assert_not_called()
+
+    def test_nonempty_recovery_database_is_rejected(self):
+        with patch.object(r, 'run', return_value=b'{"com.docker.compose.project":"taller-recuperacion-prueba"}'), patch.object(r, 'sql', return_value='6'):
+            with self.assertRaises(ValueError): r.validate_restore_target('simulated-recovery')
 
 if __name__ == '__main__': unittest.main()

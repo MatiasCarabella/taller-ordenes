@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H7 completos. H7 incluye confirmación de canales y recepción de avisos reales por correo y Telegram, confirmada por el usuario. Siguiente hito: H8, despliegue seguro, respaldo y restauración.
+Estado: H0–H8 completos para el alcance local acordado. Respaldos manuales y recuperación comprobada; HTTPS remoto y programación documentados. Siguiente hito: H9, demo y cierre académico.
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -51,7 +51,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H5 | Reparación, cierre, entrega y margen | H4 | Completado |
 | H6 | Documentos descargables | H4; resumen requiere H5 | Completado |
 | H7 | Canales confirmados y avisos reales | H5 | Completo: recepción real confirmada por el usuario |
-| H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Pendiente |
+| H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Completo en Docker local; sin job diario por decisión del usuario |
 | H9 | Demo y apartado académico con evidencia real | H8 | Pendiente |
 
 ### H0. Preparar el entorno y el proyecto
@@ -161,17 +161,19 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 
 ### H8. Despliegue, seguridad y recuperación
 
-- [ ] Construir frontend y backend reproducibles y ejecutar los tres contenedores. El frontend/proxy sirve los archivos y reenvía `/api`; MySQL queda privado.
-- [ ] Configurar HTTPS remoto, cookies seguras, límites por origen en el proxy, secretos mediante archivos protegidos y registros técnicos sin credenciales, tokens ni contenido sensible.
-- [ ] Revisar toda la matriz perfil/recurso/acción y repetir las pruebas críticas en la configuración de despliegue.
-- [ ] Implementar respaldo lógico consistente, compresión, checksum y cifrado con age; usuario de respaldo separado y exclusión de migraciones durante la copia.
-- [ ] Preparar tarea diaria a las 02:00 de Buenos Aires, depósito privado externo, copia semanal local y retención de siete diarias, cuatro semanales y tres mensuales; rotar únicamente después de verificar una nueva copia válida.
-- [ ] Generar paquete independiente de código con bundle Git, etiqueta/commit, migraciones, herramientas fijadas, Compose, instrucciones y manifiesto; cifrarlo y comprobar su carga separada del repositorio. Excluir secretos y datos personales.
-- [ ] Realizar restauración en entorno limpio de código y BDD compatibles; comprobar cuentas, relaciones, versiones autorizadas y el caso conocido de margen.
-- [ ] Medir duración y antigüedad del respaldo recuperado frente a los objetivos RTO 4 h/RPO 24 h. Documentar resultados medidos y condiciones; no presentar los objetivos como garantías comprobadas sin evidencia.
-- [ ] Preparar instrucciones de arranque, actualización, apagado, restauración y reposición técnica de credenciales; probarlas desde cero.
+Alcance acordado: Docker local. HTTPS remoto queda preparado y verificado en laboratorio; no se publica un servidor. El usuario pidió respaldos manuales e instrucciones de programación, sin registrar el job diario ni configurar un depósito externo.
 
-**Cierre:** una versión etiquetada arranca y se recupera con sus instrucciones. La restauración comprobada conserva la autorización y los importes históricos. Las tareas programadas y revisiones periódicas quedan diferenciadas del ensayo realizado durante la implementación.
+- [x] Construir frontend y backend con herramientas fijadas y ejecutar los tres contenedores; proxy con `/api` y MySQL privado.
+- [x] Preparar HTTPS remoto y comprobar TLS, cookies seguras, límites por origen, secretos protegidos y registros sin contenido sensible en entorno aislado.
+- [x] Revisar matriz perfil/recurso/acción: 131 pruebas y cincuenta comprobaciones adicionales sobre proxy HTTPS.
+- [x] Implementar respaldo InnoDB consistente, gzip, checksum y cifrado age con usuario separado; coordinar migraciones/actualizaciones mediante bloqueo compartido y procedimiento documentado, sin DDL manual durante la copia.
+- [x] Documentar programación a las 02:00 de Buenos Aires y depósito privado externo opcionales; implementar y probar retención de siete diarias, cuatro semanales y tres mensuales, con copia semanal local y rotación posterior a validación. Mantener ejecución manual según lo solicitado.
+- [x] Generar paquete independiente de código con bundle Git, commit, migraciones, herramientas fijadas, Compose, instrucciones y manifiesto; cifrar y recuperar sin montar el repositorio original. Excluir secretos y datos personales del paquete de código.
+- [x] Restaurar código y BDD compatibles en entornos limpios; comparar seis tablas, cuentas, relaciones y presupuesto autorizado; comprobar caso conocido de margen de 68.000.
+- [x] Medir recuperación: 70,845 s y 67,408 s hasta servicios saludables; respaldos de 88,118 s y 36,234 s al importar. Diferenciar estas mediciones de objetivos RTO 4 h/RPO 24 h continuos.
+- [x] Documentar y ensayar arranque, actualización, apagado, restauración y reposición técnica de credenciales; añadir protección contra confusión de proyectos y bases no vacías.
+
+**Cierre:** operación y recuperación locales comprobadas. Evidencia: docs/VERIFICACION_H8.md; procedimientos: docs/OPERACION_Y_RECUPERACION.md. El despliegue remoto y la activación de tareas/depósito externo requieren su configuración específica y no se presentan como realizados.
 
 ### H9. Preparar la demo y cerrar la entrega
 
@@ -257,6 +259,8 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 08/11/2026 | H7 / confirmaciones reales | Usuario confirmó correo y Telegram; BDD corrobora una cuenta activa con ambos canales confirmados | docs/VERIFICACION_H7.md | Publicar presupuesto de prueba y comprobar ambos avisos de negocio |
 | 08/11/2026 | H7 / cierre con avisos reales | Usuario confirmó recepción por correo y Telegram tras la prueba de negocio; BDD corrobora orden 1 con diagnóstico, versión 1 y estado ENTREGADO | Etiqueta local h7-avisos; docs/VERIFICACION_H7.md | H8: despliegue seguro, respaldo y restauración |
 
+| 08/11/2026 | H8 / operación y recuperación | 131 pruebas, nueve de recuperación, cincuenta controles HTTPS y dos restauraciones con seis tablas coincidentes y margen de 68.000 conservado | Etiqueta local h8-recuperacion; docs/VERIFICACION_H8.md | H9: demo y entrega final |
+
 ## 7. Guion previsto para la demo
 
 1. Personal inicia sesión, registra/selecciona vehículo y abre una orden.
@@ -270,7 +274,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H7 están completos en D:/Code/taller-ordenes. SMTP y bot están configurados; se verificaron conectividad y confirmación de canales, y el usuario confirmó recepción real de ambos avisos tras la prueba de negocio. La orden de prueba quedó entregada con diagnóstico y versión de presupuesto registrados. El siguiente paso es H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
+H0–H8 están completos para Docker local en D:/Code/taller-ordenes. Se comprobaron avisos reales y recuperación de código y BDD. Por decisión del usuario no se registra un job diario; quedan sus instrucciones y la opción de depósito externo. HTTPS remoto está preparado y ensayado localmente. Continúa H9: demo y cierre académico.
 
 ## 9. Referencias técnicas consultadas
 

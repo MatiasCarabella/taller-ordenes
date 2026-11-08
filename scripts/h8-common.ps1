@@ -27,5 +27,7 @@ function Lock-H8Maintenance {
 function Get-H8Container([string]$Service) {
     $id = & docker compose --project-directory $H8Root -f (Join-Path $H8Root 'compose.yaml') ps -q $Service
     if ($LASTEXITCODE -ne 0 -or -not $id) { throw "No está activo el servicio $Service" }
+    $directory = & docker inspect --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}' $id.Trim()
+    if ($LASTEXITCODE -ne 0 -or ([IO.Path]::GetFullPath($directory).Replace('\','/').TrimEnd('/') -ne [IO.Path]::GetFullPath($H8Root).Replace('\','/').TrimEnd('/'))) { throw 'El contenedor pertenece a otro directorio de proyecto.' }
     return $id.Trim()
 }

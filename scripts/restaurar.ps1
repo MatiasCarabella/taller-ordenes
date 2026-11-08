@@ -14,6 +14,8 @@ $project = 'taller-recuperacion-' + (Get-Date -Format 'yyyyMMddHHmmss')
 $baseArgs = @('run','--rm','--read-only','--tmpfs','/tmp','--tmpfs','/work:rw,noexec,nosuid,size=1g','--mount',"type=bind,source=$H8Root/.secrets,target=/identity,readonly",'--mount',"type=bind,source=$([IO.Path]::GetFullPath($Respaldo)),target=/input,readonly")
 Invoke-H8Docker ($baseArgs + @('--network','none','--mount',"type=bind,source=$code,target=/recovered",$H8Image,'code'))
 & (Join-Path $code 'scripts/inicializar-secretos.ps1')
+# Los comandos posteriores desde el código recuperado deben seguir usando su proyecto aislado.
+[IO.File]::WriteAllText((Join-Path $code '.env'), "COMPOSE_PROJECT_NAME=$project`nHTTP_BIND=127.0.0.1`nHTTP_PORT=$Puerto`n", [Text.UTF8Encoding]::new($false))
 $previousPort = $env:HTTP_PORT
 try {
     $env:HTTP_PORT = "$Puerto"
