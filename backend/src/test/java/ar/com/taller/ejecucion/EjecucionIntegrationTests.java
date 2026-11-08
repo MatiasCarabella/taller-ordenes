@@ -223,7 +223,7 @@ class EjecucionIntegrationTests {
         for(String path:List.of("/trabajo","/cierre/previsualizacion","/cierre"))assertEquals(409,staff.post(base()+path,path.equals("/trabajo")?work("Cambio",authorized(),true):path.equals("/cierre")?confirm(input,token):input).statusCode());
         assertEquals(409,admin().post(base()+"/cancelacion","{\"motivo\":\"Cambio\"}").statusCode());
         var first=staff.post(base()+"/entrega","{}");assertEquals(200,first.statusCode());clock.advance(Duration.ofSeconds(1));
-        var second=staff.post(base()+"/entrega","{}");assertEquals(first.body(),second.body());
+        var second=staff.post(base()+"/entrega","{}");assertEquals(text(first.body(),"entregadoEn"),text(second.body(),"entregadoEn"));
         assertEquals(snapshot,jdbc.sql("SELECT ingreso_final,costo_repuestos_total,horas_mano_obra_total,tarifa_hora_aplicada,finalizado_en,trabajo_realizado,presupuesto_autorizado_id FROM orden WHERE id=:id").param("id",orderId).query().singleRow());
         assertTrue(admin().get(report()).body().contains("\"finalizadas\":1"));
     }

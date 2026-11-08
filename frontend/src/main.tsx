@@ -6,6 +6,7 @@ import './styles.css';
 import './operacion.css';
 import { Operacion } from './operacion';
 import { Resultados } from './resultados';
+import { Canales } from './canales';
 
 const names: Record<Perfil, string> = {
   ADMINISTRACION: 'Administración', PERSONAL: 'Personal del taller', CLIENTE: 'Cliente',
@@ -29,11 +30,12 @@ function App() {
   const [notice, setNotice] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [avisos,setAvisos]=useState<api.Informe|null>(null);
 
   const navigate = useCallback((next: Page, replace = false) => {
     if (location.pathname !== next) history[replace ? 'replaceState' : 'pushState'](null, '', next);
     setPage(next);
-    setError('');
+    setError('');setAvisos(null);
   }, []);
   const expired = useCallback(() => {
     setSession(null);
@@ -72,6 +74,9 @@ function App() {
 
   useEffect(()=>api.onActivity(()=>setSession(previous=>previous?{...previous,
     vencePorInactividadEn:new Date(Date.now()+20*60*1000).toISOString()}:previous)),[]);
+
+  useEffect(()=>api.onAvisos(setAvisos),[]);
+  const refreshAccount=useCallback(async()=>{try{setSession(await api.get<Sesion>('/api/auth/me'));}catch(e){if(e instanceof api.ApiError&&e.status===401)expired();else setError(message(e));}},[expired]);
 
   const id = session?.usuario.id;
   const perfil = session?.usuario.perfil;
@@ -137,13 +142,15 @@ function App() {
         </nav>
         <main className="content">
           {error && <p className="alert" role="alert">{error}</p>}
+          {avisos&&<section className="panel notification-report" role="status" aria-live="polite"><div className="section-heading"><h2>Resultado de avisos</h2><button className="quiet" onClick={()=>setAvisos(null)}>Cerrar avisos</button></div>
+            <p>La operación quedó guardada. El portal mantiene la información actual.</p><ul>{avisos.canales.map(c=><li key={c.canal}><strong>{c.canal==='CORREO'?'Correo':'Telegram'}:</strong> {c.mensaje}</li>)}</ul></section>}
           {page==='/resultados'?<Resultados perfil={session.usuario.perfil} onExpired={expired} navigate={navigate}/>:page.startsWith('/vehiculos')||page.startsWith('/ordenes') ? <Operacion page={page} session={session} navigate={navigate} onExpired={expired}/> : page === '/cuenta' ? <>
             <p className="eyebrow">Mi cuenta</p><h1>Tus datos de acceso</h1>
             <p className="lead">Esta es la cuenta con la que ingresaste al taller.</p>
             <section className="panel" aria-label="Datos de la cuenta">
               <dl><dt>Nombre</dt><dd>{session.usuario.nombre}</dd><dt>Correo</dt><dd>{session.usuario.correo}</dd>
                 <dt>Perfil</dt><dd>{names[session.usuario.perfil]}</dd><dt>Estado de la cuenta</dt><dd><span className="badge">Activa</span></dd></dl>
-            </section></> : <>
+            </section>{session.usuario.perfil==='CLIENTE'&&<Canales onExpired={expired} onAccountChanged={refreshAccount}/>}</> : <>
             <p className="eyebrow">{names[session.usuario.perfil]}</p><h1>Hola, {session.usuario.nombre}.</h1>
             <p className="lead">Bienvenido a tu espacio de trabajo.</p>
             <div className="home-actions">{session.usuario.perfil==='PERSONAL'&&<button className="solid" onClick={()=>navigate('/ordenes/nueva')}>Abrir orden</button>}

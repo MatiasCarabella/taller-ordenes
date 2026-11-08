@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @ConditionalOnWebApplication
 public class PresupuestosController {
     private final PresupuestosService service;
-    public PresupuestosController(PresupuestosService service){this.service=service;}
+    private final ar.com.taller.canales.AvisosCoordinator avisos;
+    public PresupuestosController(PresupuestosService service,ar.com.taller.canales.AvisosCoordinator avisos){this.service=service;this.avisos=avisos;}
     @GetMapping("/api/ordenes/{id}/presupuestos")
     public Contexto contexto(@AuthenticationPrincipal CuentaPrincipal actor,@PathVariable long id){return service.contexto(actor,id);}
     @GetMapping("/api/ordenes/{id}/presupuestos/{presupuestoId}")
@@ -24,9 +25,10 @@ public class PresupuestosController {
     public Previsualizacion preview(@AuthenticationPrincipal CuentaPrincipal actor,@PathVariable long id,@Valid @RequestBody PublicacionRequest request){return service.previsualizar(actor,id,request);}
     @PostMapping("/api/ordenes/{id}/presupuestos")
     public ResponseEntity<Contexto> publicar(@AuthenticationPrincipal CuentaPrincipal actor,@PathVariable long id,@Valid @RequestBody PublicacionRequest request){
-        var result=service.publicar(actor,id,request);
+        var operation=service.publicar(actor,id,request);
+        var result=operation.datos().conAvisos(avisos.enviar(operation.evento()));
         return ResponseEntity.created(URI.create("/api/ordenes/"+id+"/presupuestos/"+result.presupuestos().getFirst().id())).body(result);
     }
     @PostMapping("/api/ordenes/{id}/presupuestos/{presupuestoId}/decision")
-    public Contexto decidir(@AuthenticationPrincipal CuentaPrincipal actor,@PathVariable long id,@PathVariable long presupuestoId,@Valid @RequestBody DecisionRequest request){return service.decidir(actor,id,presupuestoId,request);}
+    public Contexto decidir(@AuthenticationPrincipal CuentaPrincipal actor,@PathVariable long id,@PathVariable long presupuestoId,@Valid @RequestBody DecisionRequest request){var operation=service.decidir(actor,id,presupuestoId,request);return operation.datos().conAvisos(avisos.enviar(operation.evento()));}
 }

@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H6 implementados y verificados; recorrido completo con resultados y documentos descargables. Siguiente hito: H7 (confirmación de canales y avisos).
+Estado: H0–H6 completos. H7 implementado y validado localmente; falta configuración y recepción con proveedores reales para cerrar el hito.
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -50,7 +50,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H4 | Diagnóstico, presupuesto y autorización | H3 | Completado |
 | H5 | Reparación, cierre, entrega y margen | H4 | Completado |
 | H6 | Documentos descargables | H4; resumen requiere H5 | Completado |
-| H7 | Canales confirmados y avisos reales | H5 | Pendiente |
+| H7 | Canales confirmados y avisos reales | H5 | Implementado; pendiente prueba real |
 | H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Pendiente |
 | H9 | Demo y apartado académico con evidencia real | H8 | Pendiente |
 
@@ -145,15 +145,17 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 
 ### H7. Confirmación de canales y avisos — HU-12 y HU-07
 
-- [ ] Crear adaptadores SMTP/Telegram y simuladores de prueba; definir tiempos máximos de conexión/respuesta y resultados por canal.
-- [ ] Confirmar correo mediante código aleatorio de un uso y diez minutos; un cambio de dirección invalida su confirmación y mantiene la unicidad.
-- [ ] Generar enlace de Telegram con token aleatorio de un uso y diez minutos. Guardar solo hash, finalidad y vencimiento en Usuario; un nuevo token invalida el anterior, incluso si era para el otro canal.
-- [ ] Recibir `/start <token>` y vincular únicamente un chat privado controlado por el cliente, con unicidad, consumo transaccional del token y opción de desvincular.
-- [ ] Usar inicialmente long polling de Telegram dentro del único backend, sin un servicio de bot separado. No combinarlo con webhook. Mantener las decisiones de presupuestos en el portal.
-- [ ] Disparar avisos de los eventos de R7 después del commit del negocio, mediante un coordinador simple con tiempos acotados, sin cola persistente. La respuesta al actor informa intento/fallo/sin canal por canal; un fallo externo no revierte el negocio.
-- [ ] Enviar mensajes mínimos con enlace al portal, sin tokens de sesión, costos internos ni margen. Usar HTTPS y SMTP con TLS; mantener credenciales fuera de Git y del bundle del frontend.
-- [ ] Construir gestión de canales, estados de confirmación y avisos de resultado. El portal sigue usable sin canales o con proveedores caídos.
-- [ ] Probar tokens vencidos/reutilizados, finalidad incorrecta, vinculación concurrente, chat ya asociado, ausencia de canal, un canal fallido y caída de ambos proveedores.
+- [x] Crear adaptadores SMTP/Telegram y simuladores de prueba; definir tiempos máximos de conexión/respuesta y resultados por canal.
+- [x] Confirmar correo mediante código aleatorio de un uso y diez minutos; un cambio de dirección invalida su confirmación y mantiene la unicidad.
+- [x] Generar enlace de Telegram con token aleatorio de un uso y diez minutos. Guardar solo hash, finalidad y vencimiento en Usuario; un nuevo token invalida el anterior, incluso si era para el otro canal.
+- [x] Recibir `/start <token>` y vincular únicamente un chat privado controlado por el cliente, con unicidad, consumo transaccional del token y opción de desvincular.
+- [x] Usar inicialmente long polling de Telegram dentro del único backend, sin un servicio de bot separado. No combinarlo con webhook. Mantener las decisiones de presupuestos en el portal.
+- [x] Disparar avisos de los eventos de R7 después del commit del negocio, mediante un coordinador simple con tiempos acotados, sin cola persistente. La respuesta al actor informa intento/fallo/sin canal por canal; un fallo externo no revierte el negocio.
+- [x] Enviar mensajes mínimos con enlace al portal, sin tokens de sesión, costos internos ni margen. Usar HTTPS y SMTP con TLS; mantener credenciales fuera de Git y del bundle del frontend.
+- [x] Construir gestión de canales, estados de confirmación y avisos de resultado. El portal sigue usable sin canales o con proveedores caídos.
+- [x] Probar tokens vencidos/reutilizados, finalidad incorrecta, vinculación concurrente, chat ya asociado, ausencia de canal, un canal fallido y caída de ambos proveedores.
+
+- [ ] Completar configuración local, confirmación y recepción real de correo/Telegram con una cuenta de prueba autorizada; registrar resultado.
 
 **Cierre:** se verifica un correo y un Telegram reales con cuentas de prueba autorizadas. Los simuladores sirven para repetir fallos; la evidencia distingue qué se probó con proveedores reales y qué se simuló. No se añade historial de envíos ni reintento persistente.
 
@@ -250,6 +252,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 07/11/2026 | H4 / HU-03, HU-04 y HU-05 | Diagnóstico, versiones completas, decisiones y autorización; 55 pruebas y navegador aislado con revisión, aceptación, adicional rechazado y reinicio | Etiqueta local h4-presupuestos; docs/VERIFICACION_H4.md | H5: reparación, cierre, entrega y margen |
 | 07/11/2026 | H5 / HU-06, HU-08, HU-09, HU-10, HU-13 y HU-15 | Reparación, cierre histórico, entrega, cancelación, tarifa y margen; 80 pruebas y navegador aislado con cambio de tarifa, adicional, privacidad y reinicio | Etiqueta local h5-cierre-resultados; docs/VERIFICACION_H5.md | H6: documentos descargables |
 | 07/11/2026 | H6 / HU-14 | Descargas privadas de versiones y resumen con alcance autorizado; 94 pruebas, navegador aislado y revisión de PDF extensos con cien renglones | Etiqueta local h6-documentos; docs/VERIFICACION_H6.md | H7: canales confirmados y avisos |
+| 08/11/2026 | H7 / HU-12 y HU-07 | Gestión de canales, tokens y avisos posteriores al commit; 131 pruebas y navegador con proveedores deshabilitados y simulación explícita de interacción | Etiqueta local h7-canales-base; docs/VERIFICACION_H7.md | Configurar proveedores y comprobar recepción real para cerrar H7 |
 
 ## 7. Guion previsto para la demo
 
@@ -264,7 +267,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H6 están implementados en D:/Code/taller-ordenes. Continuar por H7: confirmación de correo, vinculación de Telegram y avisos posteriores al commit, con proveedor SMTP/bot configurados y sin historial ni cola persistente. El recorrido con entrega, margen y descargas ya funciona. Las cuentas conservan las claves establecidas mediante scripts/establecer-clave.ps1.
+H0–H7 están implementados en D:/Code/taller-ordenes. H7 requiere completar la prueba real: preparar SMTP y bot, guardar credenciales con scripts/configurar-canales.ps1, confirmar ambos canales en Mi cuenta y verificar recepción de avisos al publicar. Hasta entonces H7 no se marca cerrado. Después continúa H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
 
 ## 9. Referencias técnicas consultadas
 

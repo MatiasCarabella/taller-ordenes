@@ -12,21 +12,22 @@ import org.springframework.web.bind.annotation.*;
 @ConditionalOnWebApplication
 public class EjecucionController {
     private final EjecucionService service;
-    public EjecucionController(EjecucionService service){this.service=service;}
+    private final ar.com.taller.canales.AvisosCoordinator avisos;
+    public EjecucionController(EjecucionService service,ar.com.taller.canales.AvisosCoordinator avisos){this.service=service;this.avisos=avisos;}
     @GetMapping("/api/ordenes/{id}/ejecucion")
     public Ejecucion contexto(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id){return service.contexto(a,id);}
     @PostMapping("/api/ordenes/{id}/iniciar")
-    public Ejecucion iniciar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody Inicio r){return service.iniciar(a,id,r);}
+    public Ejecucion iniciar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody Inicio r){var operation=service.iniciar(a,id,r);return operation.datos().conAvisos(avisos.enviar(operation.evento()));}
     @PostMapping("/api/ordenes/{id}/trabajo")
     public Ejecucion trabajo(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody Trabajo r){return service.trabajo(a,id,r);}
     @PostMapping("/api/ordenes/{id}/cierre/previsualizacion")
     public VistaCierre preview(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody Cierre r){return service.previsualizar(a,id,r);}
     @PostMapping("/api/ordenes/{id}/cierre")
-    public Ejecucion cerrar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody ConfirmarCierre r){return service.cerrar(a,id,r);}
+    public Ejecucion cerrar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody ConfirmarCierre r){var operation=service.cerrar(a,id,r);return operation.datos().conAvisos(avisos.enviar(operation.evento()));}
     @PostMapping("/api/ordenes/{id}/entrega")
-    public Ejecucion entregar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id){return service.entregar(a,id);}
+    public Ejecucion entregar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id){var operation=service.entregar(a,id);return operation.datos().conAvisos(avisos.enviar(operation.evento()));}
     @PostMapping("/api/ordenes/{id}/cancelacion")
-    public Ejecucion cancelar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody Cancelacion r){return service.cancelar(a,id,r);}
+    public Ejecucion cancelar(@AuthenticationPrincipal CuentaPrincipal a,@PathVariable long id,@Valid @RequestBody Cancelacion r){var operation=service.cancelar(a,id,r);return operation.datos().conAvisos(avisos.enviar(operation.evento()));}
     @GetMapping("/api/administracion/tarifa")
     public Tarifa tarifa(@AuthenticationPrincipal CuentaPrincipal a){return service.tarifa(a);}
     @PostMapping("/api/administracion/tarifa")

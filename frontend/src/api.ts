@@ -5,6 +5,10 @@ export interface Sesion {
   limiteAbsoluto: string;
   vencePorInactividadEn: string;
 }
+export interface ResultadoCanal {canal:string;estado:string;intentado:boolean;mensaje:string}
+export interface Informe {canales:ResultadoCanal[]}
+let avisosListener:((value:Informe|null)=>void)|null=null;
+export function onAvisos(handler:(value:Informe|null)=>void){avisosListener=handler;return()=>{if(avisosListener===handler)avisosListener=null;};}
 interface Csrf { headerName: string; token: string }
 let activity: (()=>void)|null=null;
 export function onActivity(handler:()=>void) {activity=handler;return()=>{if(activity===handler)activity=null;};}
@@ -22,7 +26,9 @@ async function read<T>(response: Response): Promise<T> {
       data.title ?? 'No se pudo completar la solicitud. Intentá nuevamente.');
   }
   activity?.();
-  return response.status === 204 ? undefined as T : response.json();
+  const value=response.status===204?undefined:await response.json();
+  if(value?.avisos)avisosListener?.(value.avisos);
+  return value as T;
 }
 export function clearCsrf() { token = null; pendingToken = null; }
 export async function csrf(): Promise<Csrf> {
@@ -38,6 +44,7 @@ export async function get<T>(path: string): Promise<T> {
   return fetch(path, { credentials: 'same-origin', cache: 'no-store' }).then(read<T>);
 }
 export async function post<T>(path: string, body?: unknown, retry = true): Promise<T> {
+  avisosListener?.(null);
   const csrfToken = await csrf();
   const response = await fetch(path, {
     method: 'POST', credentials: 'same-origin',

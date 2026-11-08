@@ -34,3 +34,11 @@ Fecha: 7 de noviembre de 2026.
 - H6: documentos regenerados desde versión/cierre inmutables; la decisión, identificación y entrega se consultan al emitir. Resumen solo desde FINALIZADO y con la versión autorizada, aunque la última propuesta sea distinta.
 - H6: descargas privadas con no-store y nombres numéricos; la interfaz usa un blob temporal y renueva el estado de actividad tras descargar. Los errores y sesiones vencidas no generan archivos falsos.
 - H6: filas completas, encabezados repetidos y paginación con título junto al primer renglón y total junto al último. Caracteres sin glifo conservados mediante código Unicode explícito.
+
+- H7: se reutilizan los campos de Usuario sin nuevas entidades/migraciones. Tokens con SecureRandom, SHA-256, finalidad, diez minutos y consumo bajo bloqueo; reemplazo cruzado entre canales.
+- H7: correo como dirección de ingreso única; cambiarlo revoca confirmación y solicitudes pendientes sin cambiar contraseña/perfil. El estado de sesión consulta la dirección actual en BDD.
+- H7: chat privado con emisor coincidente y no bot, unicidad en BDD y token conservado al perder una carrera por chat ocupado. Bot verificado por getMe y sin webhook antes de emitir enlaces; recepción por long polling, offset solo en memoria.
+- H7: los servicios devuelven evento después de terminar la transacción; controladores coordinan proveedores después del commit, sin retener conexión de BDD durante el envío. No se inventan eventos cuando no cambia el estado; entrega repetida no reenvía.
+- H7: SMTP con TLS y Telegram por HTTPS. Avisos independientes, espera conjunta de ocho segundos y hasta dieciséis operaciones en curso; sin cola ni reintento persistente. Un timeout informa incertidumbre, no deshace negocio ni duplica el envío.
+- H7: configuración privada en archivo local protegido, sin valores en Compose/env del frontend; asistente con lectura oculta y permisos compatibles con PowerShell clásico/moderno. Pruebas de navegador usan otro archivo de canales sin credenciales del usuario.
+- H7: validación local con 131 pruebas y navegador. Recepción con proveedores reales queda diferenciada y pendiente hasta configurar y comprobar cuentas autorizadas.

@@ -1,6 +1,7 @@
 package ar.com.taller.presupuestos;
 
 import static ar.com.taller.presupuestos.ModelosPresupuesto.*;
+import static ar.com.taller.canales.ModelosCanales.*;
 import ar.com.taller.acceso.CuentaPrincipal;
 import ar.com.taller.operacion.NegocioException;
 import java.math.*;
@@ -133,7 +134,7 @@ public class PresupuestosService {
         role(actor,"PERSONAL");var o=order(actor,id,false);publicationContext(o,request);return calculate(request,now());
     }
 
-    public Contexto publicar(CuentaPrincipal actor,long id,PublicacionRequest request) {
+    public Operacion<Contexto> publicar(CuentaPrincipal actor,long id,PublicacionRequest request) {
         role(actor,"PERSONAL");
         return tx.execute(status->{
             var o=order(actor,id,true);
@@ -159,11 +160,11 @@ public class PresupuestosService {
             jdbc.sql("UPDATE orden SET estado=:estado,actualizado_en=:fecha WHERE id=:id")
                     .param("estado",o.estado().equals("DIAGNOSTICADO")?"PENDIENTE_APROBACION":o.estado())
                     .param("fecha",LocalDateTime.ofInstant(current,ZoneOffset.UTC)).param("id",id).update();
-            return contexto(actor,id);
+            return new Operacion<>(contexto(actor,id),new Evento(id,o.clienteId(),"PRESUPUESTO_PUBLICADO"));
         });
     }
 
-    public Contexto decidir(CuentaPrincipal actor,long ordenId,long presupuestoId,DecisionRequest request) {
+    public Operacion<Contexto> decidir(CuentaPrincipal actor,long ordenId,long presupuestoId,DecisionRequest request) {
         role(actor,"CLIENTE");
         return tx.execute(status->{
             var o=order(actor,ordenId,true);
@@ -190,7 +191,7 @@ public class PresupuestosService {
             jdbc.sql("UPDATE orden SET presupuesto_autorizado_id=:autorizado,estado=:estado,actualizado_en=:fecha WHERE id=:id")
                     .param("autorizado",authorization).param("estado",state)
                     .param("fecha",LocalDateTime.ofInstant(current,ZoneOffset.UTC)).param("id",ordenId).update();
-            return contexto(actor,ordenId);
+            return new Operacion<>(contexto(actor,ordenId),state.equals(o.estado())?null:new Evento(ordenId,o.clienteId(),state));
         });
     }
 }

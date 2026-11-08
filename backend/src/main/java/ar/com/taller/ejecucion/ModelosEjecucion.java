@@ -28,7 +28,13 @@ public final class ModelosEjecucion {
     public record Ejecucion(long ordenId,String estado,Long presupuestoAutorizadoId,Integer versionAutorizada,
             String trabajoRealizado,String iniciadoEn,String finalizadoEn,String entregadoEn,String canceladoEn,
             String motivoCancelacion,String ingresoFinal,boolean puedeIniciar,boolean puedeGuardarTrabajo,
-            boolean puedeCerrar,boolean puedeEntregar,boolean puedeCancelar) {}
+            boolean puedeCerrar,boolean puedeEntregar,boolean puedeCancelar,ar.com.taller.canales.ModelosCanales.Informe avisos) {
+        public Ejecucion(long ordenId,String estado,Long presupuestoAutorizadoId,Integer versionAutorizada,
+            String trabajoRealizado,String iniciadoEn,String finalizadoEn,String entregadoEn,String canceladoEn,
+            String motivoCancelacion,String ingresoFinal,boolean puedeIniciar,boolean puedeGuardarTrabajo,
+            boolean puedeCerrar,boolean puedeEntregar,boolean puedeCancelar){this(ordenId,estado,presupuestoAutorizadoId,versionAutorizada,trabajoRealizado,iniciadoEn,finalizadoEn,entregadoEn,canceladoEn,motivoCancelacion,ingresoFinal,puedeIniciar,puedeGuardarTrabajo,puedeCerrar,puedeEntregar,puedeCancelar,null);}
+        public Ejecucion conAvisos(ar.com.taller.canales.ModelosCanales.Informe informe){return new Ejecucion(ordenId,estado,presupuestoAutorizadoId,versionAutorizada,trabajoRealizado,iniciadoEn,finalizadoEn,entregadoEn,canceladoEn,motivoCancelacion,ingresoFinal,puedeIniciar,puedeGuardarTrabajo,puedeCerrar,puedeEntregar,puedeCancelar,informe);}
+    }
     public record VistaCierre(long ordenId,long presupuestoAutorizadoId,int versionAutorizada,String trabajoRealizado,
             String ingresoFinal,String costoRepuestosTotal,String horasManoObraTotal,String tarifaHoraAplicada,
             String costoManoObra,String confirmacion,String venceEn) {}

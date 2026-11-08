@@ -10,4 +10,6 @@ for name in db_root_password db_app_password db_migration_password db_backup_pas
   fi
   chmod 600 ".secrets/$name"
 done
+
+if [ ! -f .secrets/canales.properties ]; then printf '# Canales sin configurar\n' > .secrets/canales.properties; fi
 printf '%s\n' 'Secretos locales preparados; los existentes se conservaron.'

@@ -27,6 +27,11 @@ public final class ModelosPresupuesto {
             boolean respuestaVencida,boolean puedeResponder,List<RenglonView> renglones) {}
     public record Contexto(long ordenId,String estado,String diagnostico,String diagnosticoAutor,String diagnosticadoEn,
             int ultimaVersion,Long presupuestoAutorizadoId,boolean puedeEditarDiagnostico,boolean puedePublicar,
-            String ahoraEn,List<PresupuestoView> presupuestos) {}
+            String ahoraEn,List<PresupuestoView> presupuestos,ar.com.taller.canales.ModelosCanales.Informe avisos) {
+        public Contexto(long ordenId,String estado,String diagnostico,String diagnosticoAutor,String diagnosticadoEn,
+            int ultimaVersion,Long presupuestoAutorizadoId,boolean puedeEditarDiagnostico,boolean puedePublicar,
+            String ahoraEn,List<PresupuestoView> presupuestos){this(ordenId,estado,diagnostico,diagnosticoAutor,diagnosticadoEn,ultimaVersion,presupuestoAutorizadoId,puedeEditarDiagnostico,puedePublicar,ahoraEn,presupuestos,null);}
+        public Contexto conAvisos(ar.com.taller.canales.ModelosCanales.Informe informe){return new Contexto(ordenId,estado,diagnostico,diagnosticoAutor,diagnosticadoEn,ultimaVersion,presupuestoAutorizadoId,puedeEditarDiagnostico,puedePublicar,ahoraEn,presupuestos,informe);}
+    }
     public record Previsualizacion(String venceEn,String total,List<RenglonView> renglones) {}
 }

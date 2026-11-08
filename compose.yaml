@@ -25,12 +25,16 @@ services:
       dockerfile: infra/backend.Dockerfile
     environment:
       SESSION_COOKIE_SECURE: "${SESSION_COOKIE_SECURE:-false}"
-      SPRING_CONFIG_IMPORT: configtree:/run/secrets/
+      SPRING_CONFIG_IMPORT: configtree:/run/secrets/,optional:file:/run/secrets/canales.properties
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/taller?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
       SPRING_DATASOURCE_USERNAME: taller_app
       SPRING_FLYWAY_USER: taller_migrator
       TZ: UTC
-    secrets: [db_app_password, db_migration_password]
+    secrets:
+      - db_app_password
+      - db_migration_password
+      - source: canales_config
+        target: canales.properties
     depends_on:
       db:
         condition: service_healthy
@@ -81,3 +85,5 @@ secrets:
     file: ./.secrets/db_migration_password
   db_backup_password:
     file: ./.secrets/db_backup_password
+  canales_config:
+    file: ./.secrets/canales.properties

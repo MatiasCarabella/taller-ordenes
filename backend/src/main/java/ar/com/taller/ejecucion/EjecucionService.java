@@ -1,6 +1,7 @@
 package ar.com.taller.ejecucion;
 
 import static ar.com.taller.ejecucion.ModelosEjecucion.*;
+import static ar.com.taller.canales.ModelosCanales.*;
 import ar.com.taller.acceso.CuentaPrincipal;
 import ar.com.taller.operacion.NegocioException;
 import java.math.*;
@@ -30,7 +31,7 @@ public class EjecucionService {
             SELECT o.*,p.version AS version_autorizada,p.decision AS decision_autorizada,p.total AS total_autorizado
             FROM orden o LEFT JOIN presupuesto p ON p.id=o.presupuesto_autorizado_id AND p.orden_id=o.id
             """;
-    private record Orden(long id,String estado,Long autorizado,Integer version,String decision,BigDecimal ingreso,
+    private record Orden(long id,long clienteId,String estado,Long autorizado,Integer version,String decision,BigDecimal ingreso,
             String trabajo,Instant actualizado,Instant iniciado,Instant finalizado,Instant entregado,Instant cancelado,
             String motivo,BigDecimal ingresoFinal) {}
     private record Tasa(long id,BigDecimal valor) {}
@@ -54,7 +55,7 @@ public class EjecucionService {
         String scope=actor.perfil().equals("CLIENTE")?" AND o.cliente_id=:cliente":"";
         var q=jdbc.sql(SELECT+" WHERE o.id=:id"+scope+(lock?" FOR UPDATE":"")).param("id",id);
         if(!scope.isEmpty())q=q.param("cliente",actor.id());
-        return q.query((r,n)->new Orden(r.getLong("id"),r.getString("estado"),r.getObject("presupuesto_autorizado_id",Long.class),
+        return q.query((r,n)->new Orden(r.getLong("id"),r.getLong("cliente_id"),r.getString("estado"),r.getObject("presupuesto_autorizado_id",Long.class),
                 r.getObject("version_autorizada",Integer.class),r.getString("decision_autorizada"),r.getBigDecimal("total_autorizado"),
                 r.getString("trabajo_realizado"),instant(r,"actualizado_en"),instant(r,"iniciado_en"),instant(r,"finalizado_en"),
                 instant(r,"entregado_en"),instant(r,"cancelado_en"),r.getString("motivo_cancelacion"),r.getBigDecimal("ingreso_final")))
@@ -78,13 +79,13 @@ public class EjecucionService {
     private static void repair(Orden o){
         if(!o.estado().equals("EN_REPARACION"))throw conflict("ESTADO_INCOMPATIBLE","Esta acción requiere una orden en reparación.");
     }
-    public Ejecucion iniciar(CuentaPrincipal a,long id,Inicio request){
+    public Operacion<Ejecucion> iniciar(CuentaPrincipal a,long id,Inicio request){
         role(a,"PERSONAL");return tx.execute(s->{
             var o=order(a,id,true);
             if(!o.estado().equals("APROBADO"))throw conflict("ESTADO_INCOMPATIBLE","Solo una orden aprobada puede iniciar reparación.");
             authorization(o,request.presupuestoAutorizadoId());var f=LocalDateTime.ofInstant(now(),ZoneOffset.UTC);
             jdbc.sql("UPDATE orden SET estado='EN_REPARACION',iniciado_en=:f,actualizado_en=:f WHERE id=:id").param("id",id).param("f",f).update();
-            return view(a,order(a,id,false));
+            return new Operacion<>(view(a,order(a,id,false)),new Evento(id,o.clienteId(),"EN_REPARACION"));
         });
     }
     public Ejecucion trabajo(CuentaPrincipal a,long id,Trabajo request){
@@ -134,7 +135,7 @@ public class EjecucionService {
                     token,Instant.ofEpochMilli(expires).toString());
         });
     }
-    public Ejecucion cerrar(CuentaPrincipal a,long id,ConfirmarCierre request){
+    public Operacion<Ejecucion> cerrar(CuentaPrincipal a,long id,ConfirmarCierre request){
         role(a,"PERSONAL");return tx.execute(s->{
             var o=order(a,id,true);var t=tasa(true);var accounts=calculate(o,t,request.datos());Instant current=now();pending(id,current);
             boolean valid=false;
@@ -152,26 +153,26 @@ public class EjecucionService {
                     finalizado_en=:f,actualizado_en=:f WHERE id=:id
                     """).param("id",id).param("trabajo",request.datos().trabajoRealizado()).param("ingreso",accounts.ingreso())
                     .param("repuestos",accounts.repuestos()).param("horas",accounts.horas()).param("tarifa",accounts.tarifa()).param("f",f).update();
-            return view(a,order(a,id,false));
+            return new Operacion<>(view(a,order(a,id,false)),new Evento(id,o.clienteId(),"FINALIZADO"));
         });
     }
-    public Ejecucion entregar(CuentaPrincipal a,long id){
+    public Operacion<Ejecucion> entregar(CuentaPrincipal a,long id){
         role(a,"PERSONAL");return tx.execute(s->{
             var o=order(a,id,true);
-            if(o.estado().equals("ENTREGADO"))return view(a,o);
+            if(o.estado().equals("ENTREGADO"))return new Operacion<>(view(a,o),null);
             if(!o.estado().equals("FINALIZADO"))throw conflict("ESTADO_INCOMPATIBLE","Solo un servicio finalizado puede registrarse como entregado.");
             jdbc.sql("UPDATE orden SET estado='ENTREGADO',entregado_en=:f,actualizado_en=:f WHERE id=:id")
                     .param("id",id).param("f",LocalDateTime.ofInstant(now(),ZoneOffset.UTC)).update();
-            return view(a,order(a,id,false));
+            return new Operacion<>(view(a,order(a,id,false)),new Evento(id,o.clienteId(),"ENTREGADO"));
         });
     }
-    public Ejecucion cancelar(CuentaPrincipal a,long id,Cancelacion request){
+    public Operacion<Ejecucion> cancelar(CuentaPrincipal a,long id,Cancelacion request){
         role(a,"ADMINISTRACION");return tx.execute(s->{
             var o=order(a,id,true);
             if(!CANCELABLES.contains(o.estado()))throw conflict("CANCELACION_NO_PERMITIDA","Solo se puede cancelar una orden antes de iniciar su reparación.");
             jdbc.sql("UPDATE orden SET estado='CANCELADO',cancelado_en=:f,motivo_cancelacion=:motivo,actualizado_en=:f WHERE id=:id")
                     .param("id",id).param("f",LocalDateTime.ofInstant(now(),ZoneOffset.UTC)).param("motivo",request.motivo()).update();
-            return view(a,order(a,id,false));
+            return new Operacion<>(view(a,order(a,id,false)),new Evento(id,o.clienteId(),"CANCELADO"));
         });
     }
     @Transactional(readOnly=true)
