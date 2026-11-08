@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H6 completos. H7 implementado y validado localmente; falta configuración y recepción con proveedores reales para cerrar el hito.
+Estado: H0–H6 completos. H7 implementado, con conectividad y ambos canales confirmados de forma real; falta comprobar los avisos de una publicación para cerrar el hito.
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -50,7 +50,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H4 | Diagnóstico, presupuesto y autorización | H3 | Completado |
 | H5 | Reparación, cierre, entrega y margen | H4 | Completado |
 | H6 | Documentos descargables | H4; resumen requiere H5 | Completado |
-| H7 | Canales confirmados y avisos reales | H5 | Implementado; pendiente prueba real |
+| H7 | Canales confirmados y avisos reales | H5 | Canales confirmados; pendiente aviso de negocio |
 | H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Pendiente |
 | H9 | Demo y apartado académico con evidencia real | H8 | Pendiente |
 
@@ -254,6 +254,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 07/11/2026 | H6 / HU-14 | Descargas privadas de versiones y resumen con alcance autorizado; 94 pruebas, navegador aislado y revisión de PDF extensos con cien renglones | Etiqueta local h6-documentos; docs/VERIFICACION_H6.md | H7: canales confirmados y avisos |
 | 08/11/2026 | H7 / HU-12 y HU-07 | Gestión de canales, tokens y avisos posteriores al commit; 131 pruebas y navegador con proveedores deshabilitados y simulación explícita de interacción | Etiqueta local h7-canales-base; docs/VERIFICACION_H7.md | Configurar proveedores y comprobar recepción real para cerrar H7 |
 | 08/11/2026 | H7 / conectividad real | Configuración cargada; autenticación SMTP con TLS y bot Telegram verificado sin webhook. Diagnóstico sin envíos ni exposición de claves | docs/VERIFICACION_H7.md | Confirmar canales en Cliente y comprobar recepción de avisos |
+| 08/11/2026 | H7 / confirmaciones reales | Usuario confirmó correo y Telegram; BDD corrobora una cuenta activa con ambos canales confirmados | docs/VERIFICACION_H7.md | Publicar presupuesto de prueba y comprobar ambos avisos de negocio |
 
 ## 7. Guion previsto para la demo
 
@@ -268,7 +269,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H7 están implementados en D:/Code/taller-ordenes. SMTP y bot ya están configurados y su conectividad fue validada. H7 requiere confirmar ambos canales en Mi cuenta del Cliente y verificar recepción de avisos al publicar. Hasta entonces H7 no se marca cerrado. Después continúa H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
+H0–H7 están implementados en D:/Code/taller-ordenes. SMTP y bot están configurados; conectividad y ambos canales del Cliente fueron verificados de forma real. Resta publicar un presupuesto desde Personal y comprobar la recepción de ambos avisos de negocio. Hasta entonces H7 no se marca cerrado. Después continúa H8: despliegue seguro, respaldo y restauración. Las cuentas conservan sus contraseñas.
 
 ## 9. Referencias técnicas consultadas
 
