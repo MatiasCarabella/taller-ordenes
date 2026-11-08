@@ -75,6 +75,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST,"/api/ordenes/*/diagnostico","/api/ordenes/*/presupuestos","/api/ordenes/*/presupuestos/previsualizacion").hasRole("PERSONAL")
                         .requestMatchers(HttpMethod.POST,"/api/ordenes/*/presupuestos/*/decision").hasRole("CLIENTE")
                         .requestMatchers(HttpMethod.GET,"/api/ordenes/*/presupuestos","/api/ordenes/*/presupuestos/*").hasAnyRole("ADMINISTRACION","PERSONAL","CLIENTE")
+                        .requestMatchers(HttpMethod.GET,"/api/ordenes/*/presupuestos/*/pdf","/api/ordenes/*/resumen/pdf").hasAnyRole("ADMINISTRACION","PERSONAL","CLIENTE")
                         .requestMatchers(HttpMethod.GET,"/api/ordenes/*/ejecucion").hasAnyRole("ADMINISTRACION","PERSONAL","CLIENTE")
                         .requestMatchers(HttpMethod.POST,"/api/ordenes/*/iniciar","/api/ordenes/*/trabajo","/api/ordenes/*/cierre","/api/ordenes/*/cierre/previsualizacion","/api/ordenes/*/entrega").hasRole("PERSONAL")
                         .requestMatchers(HttpMethod.POST,"/api/ordenes/*/cancelacion").hasRole("ADMINISTRACION")

@@ -28,3 +28,9 @@ Fecha: 7 de noviembre de 2026.
 - H5: solo Administración recibe margen y configura tarifa. La consulta compartida excluye costos, horas y tarifa; Personal ve valores necesarios en la vista previa de cierre.
 - H5: reporte por finalizado_en en intervalo local semiabierto, cierre y entrega sin duplicación; rechazadas por actualizado_en y canceladas por cancelado_en, en conteos separados. Porcentaje global desde totales y CM redondeado por orden antes de sumar.
 - H5: los derivados monetarios grandes se conservan decimales; frontend usa BigInt para formatear la parte entera sin perder centavos. Consultar el mismo período fuerza una nueva lectura del reporte.
+
+- H6: Apache PDFBox 3.0.8 fijado en Maven y DejaVu Sans 2.37 embebida, con licencia/huella incluidas. Generación Java en memoria sin nuevos contenedores, tablas ni archivos persistidos.
+- H6: cada descarga exige sesión y propiedad de orden; presupuesto acotado a la misma orden. Se usa una proyección sin datos económicos internos y una transacción de lectura antes de renderizar.
+- H6: documentos regenerados desde versión/cierre inmutables; la decisión, identificación y entrega se consultan al emitir. Resumen solo desde FINALIZADO y con la versión autorizada, aunque la última propuesta sea distinta.
+- H6: descargas privadas con no-store y nombres numéricos; la interfaz usa un blob temporal y renueva el estado de actividad tras descargar. Los errores y sesiones vencidas no generan archivos falsos.
+- H6: filas completas, encabezados repetidos y paginación con título junto al primer renglón y total junto al último. Caracteres sin glifo conservados mediante código Unicode explícito.

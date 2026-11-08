@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H5 implementados y verificados; recorrido desde acceso hasta entrega y resultados completo. Siguiente hito: H6 (documentos descargables).
+Estado: H0–H6 implementados y verificados; recorrido completo con resultados y documentos descargables. Siguiente hito: H7 (confirmación de canales y avisos).
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -49,7 +49,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H3 | Vehículo y orden de extremo a extremo | H2 | Completado |
 | H4 | Diagnóstico, presupuesto y autorización | H3 | Completado |
 | H5 | Reparación, cierre, entrega y margen | H4 | Completado |
-| H6 | Documentos descargables | H4; resumen requiere H5 | Pendiente |
+| H6 | Documentos descargables | H4; resumen requiere H5 | Completado |
 | H7 | Canales confirmados y avisos reales | H5 | Pendiente |
 | H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Pendiente |
 | H9 | Demo y apartado académico con evidencia real | H8 | Pendiente |
@@ -135,11 +135,11 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 
 ### H6. Documentos descargables — HU-14
 
-- [ ] Implementar descarga de presupuestos publicados y resumen desde `FINALIZADO`, identificando la versión autorizada.
-- [ ] Generar los documentos con los datos persistidos de la versión/cierre correspondiente, sin depender de lo mostrado en el navegador.
-- [ ] Aplicar propiedad del recurso en cada descarga y excluir costos internos, tarifa y margen de los documentos del cliente.
-- [ ] Elegir una biblioteca PDF mantenida con licencia compatible, fijar su versión y comprobar saltos de página, acentos, versiones con muchos renglones y totales.
-- [ ] Añadir descargas a la interfaz y verificar autorización por solicitud directa.
+- [x] Implementar descarga de presupuestos publicados y resumen desde `FINALIZADO`, identificando la versión autorizada.
+- [x] Generar los documentos con los datos persistidos de la versión/cierre correspondiente, sin depender de lo mostrado en el navegador.
+- [x] Aplicar propiedad del recurso en cada descarga y excluir costos internos, tarifa y margen de los documentos del cliente.
+- [x] Elegir una biblioteca PDF mantenida con licencia compatible, fijar su versión y comprobar saltos de página, acentos, versiones con muchos renglones y totales.
+- [x] Añadir descargas a la interfaz y verificar autorización por solicitud directa.
 
 **Cierre:** un cliente obtiene sus documentos con contenido histórico correcto; no obtiene documentos ajenos ni datos económicos internos.
 
@@ -249,6 +249,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 | 07/11/2026 | H3 / HU-11 y HU-02 | Vehículos, órdenes, titularidad y concurrencia; 37 pruebas y navegador aislado con reinicio | Etiqueta local h3-base-operativa; docs/VERIFICACION_H3.md | H4: diagnóstico y presupuestos |
 | 07/11/2026 | H4 / HU-03, HU-04 y HU-05 | Diagnóstico, versiones completas, decisiones y autorización; 55 pruebas y navegador aislado con revisión, aceptación, adicional rechazado y reinicio | Etiqueta local h4-presupuestos; docs/VERIFICACION_H4.md | H5: reparación, cierre, entrega y margen |
 | 07/11/2026 | H5 / HU-06, HU-08, HU-09, HU-10, HU-13 y HU-15 | Reparación, cierre histórico, entrega, cancelación, tarifa y margen; 80 pruebas y navegador aislado con cambio de tarifa, adicional, privacidad y reinicio | Etiqueta local h5-cierre-resultados; docs/VERIFICACION_H5.md | H6: documentos descargables |
+| 07/11/2026 | H6 / HU-14 | Descargas privadas de versiones y resumen con alcance autorizado; 94 pruebas, navegador aislado y revisión de PDF extensos con cien renglones | Etiqueta local h6-documentos; docs/VERIFICACION_H6.md | H7: canales confirmados y avisos |
 
 ## 7. Guion previsto para la demo
 
@@ -263,7 +264,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H5 están implementados en D:/Code/taller-ordenes. Continuar por H6: descarga de presupuestos publicados y resumen final, con datos históricos, identificación de autorización y permisos por titularidad. El recorrido hasta entrega y consulta de margen ya funciona. Las cuentas conservan las claves establecidas mediante scripts/establecer-clave.ps1.
+H0–H6 están implementados en D:/Code/taller-ordenes. Continuar por H7: confirmación de correo, vinculación de Telegram y avisos posteriores al commit, con proveedor SMTP/bot configurados y sin historial ni cola persistente. El recorrido con entrega, margen y descargas ya funciona. Las cuentas conservan las claves establecidas mediante scripts/establecer-clave.ps1.
 
 ## 9. Referencias técnicas consultadas
 

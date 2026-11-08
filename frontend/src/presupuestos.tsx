@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import * as api from './api';
 import { useResource, ErrorBox } from './recursos';
 import type { Perfil } from './api';
+import {DescargarPdf} from './descarga';
 
 interface Linea {numero:number;tipo:string;descripcion:string;cantidad:string;precioUnitario:string;subtotal:string}
 interface Presupuesto {id:number;version:number;autorNombre:string;publicadoEn:string;venceEn:string;total:string;decision:string;decisorNombre:string|null;decididoEn:string|null;
@@ -79,6 +80,7 @@ export function Presupuestos(props:Props) {
           <span className="badge neutral">{decisionNames[p.decision]}</span></span><strong className="budget-total">{ars(p.total)}</strong></summary>
         <div className="budget-body"><p className="field-help">Publicada por {p.autorNombre} · {fecha(p.publicadoEn)}</p>
           <Lines rows={p.renglones}/><p className="budget-sum">Total de venta <strong>{ars(p.total)}</strong></p>
+          <DescargarPdf url={'/api/ordenes/'+props.ordenId+'/presupuestos/'+p.id+'/pdf'} nombre={'presupuesto-orden-'+props.ordenId+'-v'+p.version+'.pdf'} label={'Descargar presupuesto v'+p.version+' (PDF)'} onExpired={props.onExpired}/>
           {p.decision==='PENDIENTE'&&<p className="field-help">Plazo para responder: {fecha(p.venceEn)} (Buenos Aires).</p>}
           {p.respuestaVencida&&<p className="notice">Terminó el plazo de respuesta. Esta propuesta no agrega trabajo autorizado.</p>}
           {!p.ultimaVersion&&p.decision==='PENDIENTE'&&<p className="field-help">Hay una propuesta posterior. Esta versión se conserva para consulta.</p>}

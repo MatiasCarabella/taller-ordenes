@@ -1,6 +1,6 @@
 # Gestión de órdenes para talleres
 
-Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. El siguiente incremento incorpora documentos descargables.
+Aplicación web para órdenes, presupuestos versionados y margen directo de un taller. Implementa acceso por perfiles, vehículos, apertura y diagnóstico, decisiones del cliente, reparación, cierre con valores históricos y entrega. Administración configura la tarifa y consulta resultados. El entorno completo y las pruebas se ejecutan con Docker. Incluye descargas privadas de presupuestos y resumen final. El siguiente incremento incorpora confirmación de canales y avisos por correo/Telegram.
 
 ## Requisitos
 
@@ -86,13 +86,21 @@ La confirmación vuelve a verificar los valores. Si cambian alcance, trabajo, ú
 
 Administración dispone de Resultados y tarifa: configura una tarifa positiva, consulta el margen por período de finalización y despliega los valores de cada orden. La entrega no duplica resultados ni cambia su período. El reporte separa rechazadas/canceladas y calcula el porcentaje desde los totales. Administración también puede cancelar con motivo antes de iniciar reparación. Ver [API de ejecución y resultados](docs/api-ejecucion.md).
 
+## Documentos descargables
+
+En el detalle de la orden, desplegar una versión publicada y usar Descargar presupuesto vN (PDF). Se conservan disponibles las versiones históricas, revisadas, rechazadas o vencidas. Desde FINALIZADO/ENTREGADO, Trabajo y entrega habilita Descargar resumen final (PDF), con el trabajo final, la versión autorizada y el importe acordado al cierre.
+
+Cliente solo descarga sus documentos; Personal y Administración consultan los del taller. Todos reciben un documento de venta sin costos internos, horas, tarifa ni margen. La API verifica pertenencia en cada solicitud y el resumen no se habilita antes de finalizar. Ver [API de documentos](docs/api-documentos.md).
+
+Los PDF se generan desde datos persistidos, con formato A4, tipografía embebida, fechas de Buenos Aires, tablas continuadas y numeración. No hace falta instalar fuentes ni un navegador en el contenedor. Biblioteca y avisos: [dependencias PDF](docs/dependencias-pdf.md).
+
 ## Verificación
 
 ```powershell
 ./scripts/verificar.ps1
 ```
 
-En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 80 pruebas, incluidas sesiones, CSRF, titularidad, precisión, vencimientos, cierres y operaciones concurrentes; ver [la evidencia de H5](docs/VERIFICACION_H5.md).
+En Linux: `sh scripts/verificar.sh`. El script construye ambas aplicaciones y ejecuta pruebas de contraseñas y migraciones/restricciones sobre un MySQL real temporal. Testcontainers usa el socket Docker para crear/eliminar únicamente sus contenedores de prueba; no usa el volumen de la aplicación. Las pruebas no se omiten si Docker no está disponible. La suite actual tiene 94 pruebas, incluidas sesiones, CSRF, titularidad, precisión, vencimientos, concurrencia y contenido/paginación de PDF; ver [la evidencia de H6](docs/VERIFICACION_H6.md).
 
 Las pruebas del esquema comprueban cinco entidades, migraciones repetibles sin cambios, dominio único, titular correcto, Administración única, tarifa por perfil, autorización de la misma orden, unicidad de versiones, respuestas completas, renglones válidos, tokens, cierres y límites decimales. H4 prueba estados, dinero y concurrencia de presupuestos sobre servicios reales; H5 verifica cierre, copia histórica de tarifa, períodos y margen.
 

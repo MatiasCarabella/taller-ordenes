@@ -65,3 +65,10 @@ export async function logout(): Promise<void> {
 }
 export const homePath = (perfil: Perfil) => '/api/' +
   ({ ADMINISTRACION: 'administracion', PERSONAL: 'personal', CLIENTE: 'cliente' }[perfil]) + '/inicio';
+
+export async function pdf(path:string):Promise<Blob>{
+  const response=await fetch(path,{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/pdf'}});
+  if(!response.ok){await read<never>(response);throw new Error('No se pudo descargar el PDF.');}
+  if(!response.headers.get('Content-Type')?.toLowerCase().startsWith('application/pdf'))throw new Error('Respuesta de documento inválida.');
+  const result=await response.blob();activity?.();return result;
+}

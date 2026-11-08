@@ -3,6 +3,7 @@ import * as api from './api';
 import type { Perfil } from './api';
 import {useResource,ErrorBox} from './recursos';
 import {ars,fecha} from './formato';
+import {DescargarPdf} from './descarga';
 import './ejecucion.css';
 
 interface Contexto {ordenId:number;estado:string;presupuestoAutorizadoId:number|null;versionAutorizada:number|null;trabajoRealizado:string|null;
@@ -49,6 +50,7 @@ export function Ejecucion({ordenId,perfil,onChanged,onExpired}:{ordenId:number;p
     {c.ingresoFinal!==null&&<p>Importe final acordado: <strong>{ars(c.ingresoFinal)}</strong>.</p>}
     {closed&&<p className="field-help">El trabajo final, la autorización y los valores del cierre quedaron fijos. No se admite edición ni reapertura.</p>}
     {c.entregadoEn&&<p className="notice">Entregado: {fecha(c.entregadoEn)}.</p>}
+    {closed&&<DescargarPdf url={'/api/ordenes/'+ordenId+'/resumen/pdf'} nombre={'resumen-orden-'+ordenId+'.pdf'} label="Descargar resumen final (PDF)" onExpired={onExpired}/>}
     {c.puedeEntregar&&<button className="solid" disabled={busy} onClick={()=>setConfirmAction('entrega')}>Registrar entrega</button>}
     {c.canceladoEn&&<><p>Cancelado: {fecha(c.canceladoEn)}.</p><p className="multiline">Motivo: {c.motivoCancelacion}</p></>}
     {confirmAction&&<div className="decision-confirm" role="alertdialog" aria-label="Confirmación de operación"><h3>{confirmAction==='inicio'?'Confirmar inicio de reparación':'Confirmar entrega'}</h3>
