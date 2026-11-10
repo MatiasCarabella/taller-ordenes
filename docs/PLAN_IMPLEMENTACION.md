@@ -1,7 +1,7 @@
 # Plan de implementación del sistema de gestión de órdenes
 
 Fecha de inicio del plan: 7 de noviembre de 2026.
-Estado: H0–H8 completos para el alcance local acordado. Respaldos manuales y recuperación comprobada; HTTPS remoto y programación documentados. Siguiente hito: H9, demo y cierre académico.
+Estado: H0–H9 completos para el alcance local acordado. Demo grabada por el autor, documento final con índices verificados y README de ejecución local actualizado. Versión de cierre: entrega-final.
 
 Este archivo guía la construcción real del proyecto y, después, la preparación de la demo. Las casillas se completan al verificar resultados, con referencia al commit y a la evidencia correspondiente.
 
@@ -52,7 +52,7 @@ Las versiones exactas, imágenes y dependencias se fijan en H0 tras comprobar co
 | H6 | Documentos descargables | H4; resumen requiere H5 | Completado |
 | H7 | Canales confirmados y avisos reales | H5 | Completo: recepción real confirmada por el usuario |
 | H8 | Despliegue, respaldo y restauración comprobados | H6 y H7 | Completo en Docker local; sin job diario por decisión del usuario |
-| H9 | Demo y apartado académico con evidencia real | H8 | Pendiente |
+| H9 | Demo y apartado académico con evidencia real | H8 | Completado |
 
 ### H0. Preparar el entorno y el proyecto
 
@@ -175,16 +175,16 @@ Alcance acordado: Docker local. HTTPS remoto queda preparado y verificado en lab
 
 **Cierre:** operación y recuperación locales comprobadas. Evidencia: docs/VERIFICACION_H8.md; procedimientos: docs/OPERACION_Y_RECUPERACION.md. El despliegue remoto y la activación de tareas/depósito externo requieren su configuración específica y no se presentan como realizados.
 
-### H9. Preparar la demo y cerrar la entrega
+### H9. Demo y cierre de la entrega
 
-- [ ] Congelar una versión etiquetada y preparar un conjunto ficticio restaurable para repetir el recorrido sin inconsistencias.
-- [ ] Ensayar el guion indicado abajo con tres perfiles y comprobar que funciona tras reiniciar.
-- [ ] Preparar acceso al recurso real, instrucciones, código y material audiovisual que requiera la consigna. Definir el destino y acceso antes de publicar o compartir recursos.
-- [ ] Registrar versión, configuración, pruebas realizadas y evidencia real; distinguir simulaciones de integraciones verificadas.
-- [ ] Incorporar el apartado Demo después de Conclusiones y antes de Referencias con el enlace real. Ajustar diagramas o descripciones si alguna decisión implementada difiere de la especificación.
-- [ ] Actualizar índices y verificar el PDF académico final después de incorporar la demo.
+- [x] Etiquetar el cierre como entrega-final y conservar los ejemplos existentes elegidos por el autor, con respaldo manual cifrado fuera del repositorio público.
+- [x] Registrar la demo grabada por el autor con los tres perfiles. Las pruebas de persistencia, reinicio y recuperación están documentadas en H8; no se atribuye una nueva ejecución de esas pruebas al video.
+- [x] Mantener código e instrucciones de ejecución local en GitHub; material audiovisual en la carpeta de Drive enlazada desde el documento académico. Se comprobó acceso mediante enlace en los metadatos de la carpeta, sin modificar permisos.
+- [x] Conservar la evidencia técnica de H7/H8 y registrar el cierre en docs/VERIFICACION_H9.md; distinguir pruebas automatizadas, ensayos e información de la grabación aportada por el autor.
+- [x] Incorporar Demo después de Conclusiones y antes de Referencias con el enlace real y el párrafo ajustado por el autor.
+- [x] Verificar el PDF final de 81 páginas: 83 entradas del índice general y 35 de ilustraciones/tablas coincidentes, Demo en página 75 y Referencias en 76. Preservar el formato y el texto fuera del índice.
 
-**Cierre:** otra persona puede ejecutar o acceder al recorrido documentado con instrucciones reproducibles. La entrega describe la versión efectivamente mostrada.
+**Cierre:** entrega final preparada. La ejecución pública documentada es local con Docker; los respaldos son manuales y los procedimientos de HTTPS remoto y programación permanecen disponibles como opciones de instalación.
 
 ## 3. Organización inicial del repositorio
 
@@ -261,6 +261,8 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 | 08/11/2026 | H8 / operación y recuperación | 131 pruebas, nueve de recuperación, cincuenta controles HTTPS y dos restauraciones con seis tablas coincidentes y margen de 68.000 conservado | Etiqueta local h8-recuperacion; docs/VERIFICACION_H8.md | H9: demo y entrega final |
 
+| 09/11/2026 | H9 / cierre | Demo del autor con tres perfiles; README de 360 palabras; índices verificados y PDF final de 81 páginas; respaldo manual de los ejemplos conservados | Etiqueta entrega-final; docs/VERIFICACION_H9.md | Entrega académica |
+
 ## 7. Guion previsto para la demo
 
 1. Personal inicia sesión, registra/selecciona vehículo y abre una orden.
@@ -274,7 +276,7 @@ Al finalizar cada sesión se actualizan las casillas, el resultado comprobado y 
 
 ## 8. Primer paso de implementación
 
-H0–H8 están completos para Docker local en D:/Code/taller-ordenes. Se comprobaron avisos reales y recuperación de código y BDD. Por decisión del usuario no se registra un job diario; quedan sus instrucciones y la opción de depósito externo. HTTPS remoto está preparado y ensayado localmente. Continúa H9: demo y cierre académico.
+H0–H9 están completos para el alcance local acordado. La versión entrega-final reúne código e instrucciones de ejecución. La demo fue grabada por el autor y enlazada desde el documento académico; sus índices y la exportación PDF final están verificados. Se conserva la decisión de ejecutar respaldos manuales, con instrucciones opcionales para programación y despliegue remoto.
 
 ## 9. Referencias técnicas consultadas
 
